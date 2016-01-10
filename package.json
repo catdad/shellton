@@ -12,8 +12,8 @@
     "mocha": "^2.3.4"
   },
   "scripts": {
-    "test": "mocha",
-    "spec": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "dot": "mocha --reporter dot"
   },
   "repository": {
     "type": "git",
