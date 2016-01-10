@@ -4,10 +4,11 @@
   "description": "0.0.1",
   "main": "shellton.js",
   "dependencies": {
-    "async": "^1.5.2",
     "through2": "^2.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "event-stream": "^3.3.2"
+  },
   "scripts": {
     "test": "node test.js"
   },
