@@ -1,0 +1,24 @@
+{
+  "name": "shellton",
+  "version": "1.0.0",
+  "description": "0.0.1",
+  "main": "shellton.js",
+  "dependencies": {
+    "async": "^1.5.2",
+    "through2": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/catdad/shellton.git"
+  },
+  "author": "Kiril Vatev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/catdad/shellton/issues"
+  },
+  "homepage": "https://github.com/catdad/shellton#readme"
+}

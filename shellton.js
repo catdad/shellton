@@ -30,20 +30,16 @@ function exec(command, done) {
         cwd: config.cwd,
         env: env
     }, function(err, stdout, stderr) {
-        if (failOnError && err) {
-            done(err);
-        } else {
-            done(undefined, stdout, stderr);
-        }
+        done(err, stdout, stderr);
     });
     
     if (config.stdout) {
-        var opts = config.stdout === process.stdout ? { end: false }, { end: true };
+        var opts = config.stdout === process.stdout ? { end: false } : { end: true };
         task.stdout.pipe(config.stdout, opts);
     }
     
     if (config.stderr) {
-        var opts = config.stdout === process.stdout ? { end: false }, { end: true };
+        var opts = config.stdout === process.stdout ? { end: false } : { end: true };
         task.stderr.pipe(config.stderr);
     }
     
