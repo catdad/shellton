@@ -9,9 +9,9 @@ node_js:
   
 os:
   - linux
-  - osx
+#  - osx
 
-before_install:
-  - rm -rf ~/.nvm
-  - git clone https://github.com/creationix/nvm.git !/.nvm
-  - source ~/.nvm/nvm.sh
+#before_install:
+#  - rm -rf ~/.nvm
+#  - git clone https://github.com/creationix/nvm.git !/.nvm
+#  - source ~/.nvm/nvm.sh
