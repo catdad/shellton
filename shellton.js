@@ -85,7 +85,7 @@ function spawn(command, done) {
     var task = child.spawn(executable, tokens, {
         env: config.env,
         cwd: config.cwd,
-        stdio: ['ignore', 'pipe', 'pipe']
+        stdio: stdio
     });
 
     task.stdout.on('data', function(chunk) {
