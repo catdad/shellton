@@ -1,4 +1,5 @@
 /* jshint node: true */
+
 var path = require('path');
 var child = require('child_process');
 
@@ -35,7 +36,7 @@ function pipeStream(from, to, config) {
 
 function exec(command, done) {
     var config = getConfig(command);
-    var env = Object.create(process.env);
+    var env = config.env || Object.create(process.env);
     
     var task = child.exec(config.task, {
         cwd: config.cwd,
@@ -57,47 +58,68 @@ function exec(command, done) {
 
 function spawn(command, done) {
     var config = getConfig(command);
+    var env = config.env || Object.create(process.env);
     
     var stdoutBody = [];
     var stderrBody = [];
     
-    function runTask() {
-
-        var tokens = config.task.split(/\s+/g);
-        tokens = ['/c'].concat(tokens);
-        var task = child.spawn('cmd.exe', tokens, {
-            env: config.env,
-            cwd: config.cwd,
-            stdio: ['ignore', 'pipe', 'pipe']
-        });
-        
-        task.stdout.on('data', function(chunk) {
-            stdoutBody.push(chunk);
-        });
-        
-        task.stderr.on('data', function(chunk) {
-            stderrBody.push(chunk);
-        });
-
-        task.on('error', function(err) {
-            done(err);
-        });
-
-        task.on('exit', function(code) {
-            var err;
-            if (code !== 0) {
-                err = new Error('Process exited with code: ' + code);
-                err.exitCode = code;
-            }
-            
-            done(err, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());
-        });
-        
-        return task;
+    var stdio = [ 'ignore', 'pipe', 'pipe' ];
+    var pipeStdout = true;
+    var pipeStderr = true;
+    
+    if (isIOStream(config.stdout)) {
+        stdio[1] = config.stdout;
+        pipeStdout = false;
     }
     
-    return runTask();
+    if (isIOStream(config.stderr)) {
+        stdio[2] = config.stderr;
+        pipeStderr = false;
+    }
+    
+    var tokens = config.task.split(/\s+/g);
+    tokens = ['/c'].concat(tokens);
+    var task = child.spawn('cmd.exe', tokens, {
+        env: config.env,
+        cwd: config.cwd,
+        stdio: ['ignore', 'pipe', 'pipe']
+    });
+
+    task.stdout.on('data', function(chunk) {
+        stdoutBody.push(chunk);
+    });
+
+    task.stderr.on('data', function(chunk) {
+        stderrBody.push(chunk);
+    });
+
+    task.on('error', function(err) {
+        done(err);
+    });
+
+    task.on('exit', function(code) {
+        var err;
+        if (code !== 0) {
+            err = new Error('Process exited with code: ' + code);
+            err.exitCode = code;
+        }
+
+        done(err, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());
+    });
+    
+    if (pipeStdout && config.stdout) {
+        pipeStream(task.stdout, config.stdout);
+    }
+    
+    if (pipeStderr && config.stderr) {
+        pipeStream(task.stderr, config.stderr);
+    }
+
+    return task;
 }
 
 // module.exports = exec;
 module.exports = spawn;
+
+module.exports.spawn = spawn;
+module.exports.exec = exec;

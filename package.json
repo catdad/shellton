@@ -7,10 +7,13 @@
     "through2": "^2.0.0"
   },
   "devDependencies": {
-    "event-stream": "^3.3.2"
+    "chai": "^3.4.1",
+    "event-stream": "^3.3.2",
+    "mocha": "^2.3.4"
   },
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha",
+    "spec": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
