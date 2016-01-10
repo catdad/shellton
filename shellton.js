@@ -22,6 +22,17 @@ function getConfig(command) {
     return config;
 }
 
+function isIOStream(stream) {
+    return process.stdin === stream ||
+        process.stdout === stream ||
+        process.stderr === stream;
+}
+
+function pipeStream(from, to, config) {
+    var opts = isIOStream(to) ? { end: false } : { end: true };
+    from.pipe(to, opts);
+}
+
 function exec(command, done) {
     var config = getConfig(command);
     var env = Object.create(process.env);
@@ -34,13 +45,11 @@ function exec(command, done) {
     });
     
     if (config.stdout) {
-        var opts = config.stdout === process.stdout ? { end: false } : { end: true };
-        task.stdout.pipe(config.stdout, opts);
+        pipeStream(task.stdout, config.stdout);
     }
     
     if (config.stderr) {
-        var opts = config.stdout === process.stdout ? { end: false } : { end: true };
-        task.stderr.pipe(config.stderr);
+        pipeStream(task.stderr, config.stderr);
     }
     
     return task;
