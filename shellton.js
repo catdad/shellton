@@ -77,9 +77,13 @@ function spawn(command, done) {
         pipeStderr = false;
     }
     
+    var platform = /^win/.test(process.platform) ? 'win' : 'nix';
+    var executable = platform === 'win' ? 'cmd.exe' : 'bash';
+    var firstToken = platform === 'win' ? '/c' : '-c';
+    
     var tokens = config.task.split(/\s+/g);
-    tokens = ['/c'].concat(tokens);
-    var task = child.spawn('cmd.exe', tokens, {
+    tokens = [firstToken].concat(tokens);
+    var task = child.spawn(executable, tokens, {
         env: config.env,
         cwd: config.cwd,
         stdio: ['ignore', 'pipe', 'pipe']
