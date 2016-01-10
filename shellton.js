@@ -80,9 +80,8 @@ function spawn(command, done) {
     var platform = /^win/.test(process.platform) ? 'win' : 'nix';
     var executable = platform === 'win' ? 'cmd.exe' : 'bash';
     var firstToken = platform === 'win' ? '/c' : '-c';
+    var tokens = [firstToken, config.task];
     
-    var tokens = config.task.split(/\s+/g);
-    tokens = [firstToken].concat(tokens);
     var task = child.spawn(executable, tokens, {
         env: config.env,
         cwd: config.cwd,
