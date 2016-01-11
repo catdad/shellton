@@ -104,7 +104,7 @@ function spawn(command, done) {
         var err;
         if (code !== 0) {
             err = new Error('Process exited with code: ' + code);
-            err.exitCode = code;
+            err.code = code;
         }
 
         done(err, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());

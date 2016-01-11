@@ -70,6 +70,7 @@ function addTests(shell) {
                 done();
             });
         });
+        
         describe('streams to', function() {
             function testStream(opts, stream, done) {
                 var shellOut, streamOut, c = 0;
@@ -113,15 +114,34 @@ function addTests(shell) {
                 testStream(opts, stream, done);
             });
         });
-        it('takes an stderr stream');
 
         it('does not call end on a process stream');
         it('calls end on any other stream');
 
         describe('calls a callback', function() {
-            it('with err if the command does not exist');
-            it('with an stdout parameter');
-            it('with an stderr parameter');
+            it('with err if the command does not exist', function(done) {
+                var notExistErrCode = platform === 'win' ? 1 : 127;
+                
+                shell('command-does-not-exist-435632', function(err, stdout, stderr) {
+                    expect(err).to.be.an.instanceof(Error);
+                    expect(err.code).to.equal(notExistErrCode);
+                    done();
+                });
+            });
+            it('with an stdout parameter', function(done) {
+                shell('echo this is a test', function(err, stdout, stderr) {
+                    expect(stdout).to.not.be.undefined;
+                    testSuccessResult(err, stdout, stderr, 'this is a test');
+                    done();
+                });
+            });
+            it('with an stderr parameter', function(done) {
+                shell('echo this is a test 1>&2', function(err, stdout, stderr) {
+                    expect(stderr).to.not.be.undefined;
+                    testSuccessResult(err, stdout, stderr, undefined, 'this is a test');
+                    done();
+                });
+            });
         });    
     };
 }
