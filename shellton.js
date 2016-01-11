@@ -35,11 +35,10 @@ function pipeStream(from, to, config) {
 
 function exec(command, done) {
     var config = getConfig(command);
-    var env = config.env || Object.create(process.env);
     
     var task = child.exec(config.task, {
-        cwd: config.cwd,
-        env: env
+        cwd: config.cwd || process.cwd(),
+        env: config.env || process.env
     }, function(err, stdout, stderr) {
         done(err, stdout, stderr);
     });
@@ -81,8 +80,8 @@ function spawn(command, done) {
     var tokens = [firstToken, config.task];
     
     var task = child.spawn(executable, tokens, {
-        env: config.env,
-        cwd: config.cwd,
+        env: config.env || process.env,
+        cwd: config.cwd || process.cwd(),
         stdio: stdio
     });
 
