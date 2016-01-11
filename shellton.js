@@ -3,8 +3,6 @@
 var path = require('path');
 var child = require('child_process');
 
-var through = require('through2');
-
 // Add the node_modules to the PATH
 var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';

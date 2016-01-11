@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "0.0.1",
   "main": "shellton.js",
-  "dependencies": {
-    "through2": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "chai": "^3.4.1",
     "event-stream": "^3.3.2",
-    "mocha": "^2.3.4"
+    "mocha": "^2.3.4",
+    "through2": "^2.0.0"
   },
   "scripts": {
     "test": "mocha --reporter spec",
