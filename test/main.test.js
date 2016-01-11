@@ -4,6 +4,9 @@
 var chai = require('chai');
 var expect = chai.expect;
 
+var through = require('through2');
+var es = require('event-stream');
+
 var shellton = require('../shellton.js');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
@@ -28,7 +31,6 @@ function addTests(shell) {
         } else if (isRegex(errVal)) {
             expect(stderr).to.match(errVal);
         }
-        
     }
     
     return function() {
@@ -68,7 +70,49 @@ function addTests(shell) {
                 done();
             });
         });
-        it('takes an stdout stream');
+        describe('streams to', function() {
+            function testStream(opts, stream, done) {
+                var shellOut, streamOut, c = 0;
+
+                function compare() {
+                    if (c < 2) { return; }
+
+                    expect(shellOut.toString()).to.equal(streamOut.toString());
+                    done();
+                }
+
+                stream.pipe(es.wait(function(err, body) {
+                    c++;
+                    streamOut = body;
+                    compare();
+                }));
+
+                shell(opts, function(err, stdout, stderr) {
+                    c++;
+                    shellOut = opts.stdout ? stdout : stderr;
+                    compare();
+                });    
+            }
+            
+            it('an stdout stream', function(done) {
+                var stream = through();
+                var opts = {
+                    task: 'echo this is a test',
+                    stdout: stream
+                };
+                
+                testStream(opts, stream, done);
+            });
+            it('an stderr stream', function(done) {
+                var stream = through();
+                var opts = {
+                    task: 'echo this is a test 1>&2',
+                    stderr: stream
+                };
+                
+                testStream(opts, stream, done);
+            });
+        });
         it('takes an stderr stream');
 
         it('does not call end on a process stream');
