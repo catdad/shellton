@@ -7,6 +7,7 @@ var through = require('through2');
 
 // Add the node_modules to the PATH
 var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
+var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
 function getConfig(command) {
     var config;
@@ -77,7 +78,6 @@ function spawn(command, done) {
         pipeStderr = false;
     }
     
-    var platform = /^win/.test(process.platform) ? 'win' : 'nix';
     var executable = platform === 'win' ? 'cmd.exe' : 'bash';
     var firstToken = platform === 'win' ? '/c' : '-c';
     var tokens = [firstToken, config.task];
