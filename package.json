@@ -25,5 +25,15 @@
   "bugs": {
     "url": "https://github.com/catdad/shellton/issues"
   },
-  "homepage": "https://github.com/catdad/shellton#readme"
+  "homepage": "https://github.com/catdad/shellton#readme",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "unix",
+    "shell",
+    "exec",
+    "spawn",
+    "command"
+  ]
 }
