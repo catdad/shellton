@@ -1,1 +1,1 @@
-test/**/*.test.js --reporter dot --ui bdd --growl
+test/**/*.test.js --reporter dot --ui bdd
