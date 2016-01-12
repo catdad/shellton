@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "0.0.1",
   "main": "shellton.js",
-  "dependencies": {},
+  "dependencies": {
+    "async": "^1.5.2"
+  },
   "devDependencies": {
     "chai": "^3.4.1",
     "event-stream": "^3.3.2",

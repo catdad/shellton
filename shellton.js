@@ -2,6 +2,7 @@
 
 var path = require('path');
 var child = require('child_process');
+var async = require('async');
 
 // Add the node_modules to the PATH
 var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
@@ -96,15 +97,34 @@ function spawn(command, done) {
     task.on('error', function(err) {
         done(err);
     });
-
-    task.on('exit', function(code) {
-        var err;
-        if (code !== 0) {
-            err = new Error('Process exited with code: ' + code);
-            err.code = code;
+    
+    async.parallel({
+        stdout: function(next) {
+            task.stdout.on('end', function() {
+                next();
+            });
+        },
+        stderr: function(next) {
+            task.stderr.on('end', function() {
+                next();
+            });
+        },
+        exitCode: function(next) {
+            task.on('exit', function(code) {
+                var err;
+                if (code !== 0) {
+                    err = new Error('Process exited with code: ' + code);
+                    err.code = code;
+                }
+                next(err);
+            });
         }
-
-        done(err, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());
+    }, function(err, results) {
+        if (err) {
+            return done(err);
+        }
+        
+        done(undefined, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());
     });
     
     if (pipeStdout && config.stdout) {
