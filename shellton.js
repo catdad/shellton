@@ -59,9 +59,6 @@ function spawn(command, done) {
     var config = getConfig(command);
     var env = config.env || Object.create(process.env);
     
-    var stdoutBody = [];
-    var stderrBody = [];
-    
     var stdio = [ 'ignore', 'pipe', 'pipe' ];
     var pipeStdout = true;
     var pipeStderr = true;
@@ -85,28 +82,32 @@ function spawn(command, done) {
         cwd: config.cwd || process.cwd(),
         stdio: stdio
     });
-
-    task.stdout.on('data', function(chunk) {
-        stdoutBody.push(chunk);
-    });
-
-    task.stderr.on('data', function(chunk) {
-        stderrBody.push(chunk);
-    });
-
+    
     task.on('error', function(err) {
         done(err);
     });
     
     async.parallel({
         stdout: function(next) {
+            var stdoutBody = [];
+    
+            task.stdout.on('data', function(chunk) {
+                stdoutBody.push(chunk);
+            });
+
             task.stdout.on('end', function() {
-                next();
+                next(undefined, Buffer.concat(stdoutBody).toString());
             });
         },
         stderr: function(next) {
+            var stderrBody = [];
+    
+            task.stderr.on('data', function(chunk) {
+                stderrBody.push(chunk);
+            });
+            
             task.stderr.on('end', function() {
-                next();
+                next(undefined, Buffer.concat(stderrBody).toString());
             });
         },
         exitCode: function(next) {
@@ -124,7 +125,7 @@ function spawn(command, done) {
             return done(err);
         }
         
-        done(undefined, Buffer.concat(stdoutBody).toString(), Buffer.concat(stderrBody).toString());
+        done(undefined, results.stdout, results.stderr);
     });
     
     if (pipeStdout && config.stdout) {
