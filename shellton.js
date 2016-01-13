@@ -52,6 +52,10 @@ function exec(command, done) {
         pipeStream(task.stderr, config.stderr);
     }
     
+    if (config.stdin) {
+        config.stdin.pipe(task.stdin);
+    }
+    
     return task;
 }
 
@@ -59,7 +63,7 @@ function spawn(command, done) {
     var config = getConfig(command);
     var env = config.env || Object.create(process.env);
     
-    var stdio = [ 'ignore', 'pipe', 'pipe' ];
+    var stdio = [ 'pipe', 'pipe', 'pipe' ];
     var pipeStdout = true;
     var pipeStderr = true;
     
@@ -87,7 +91,7 @@ function spawn(command, done) {
         done(err);
     });
     
-    async.parallel({
+    var parallelTasks = {
         stdout: function(next) {
             var stdoutBody = [];
     
@@ -120,7 +124,30 @@ function spawn(command, done) {
                 next(err);
             });
         }
-    }, function(err, results) {
+    };
+    
+    /*
+    if (config.stdin && config.stdin.pipe) {
+        // TODO is this right?
+//        task.stdin.setEncoding('utf-8');
+        config.stdin.pipe(task.stdin, { end: 'false' });
+        
+        // add a task to make sure this stream ends as well,
+        // before exiting the task
+        parallelTasks.stdin = function(next) {
+//            config.stdin.on('data', function(chunk) {
+//                console.log('in chunk', chunk.toString());
+//                task.stdin.write(chunk.toString());
+//            });
+            config.stdin.on('end', function() {
+                task.stdin.end();
+                next();
+            });
+        };
+    }
+    */
+    
+    async.parallel(parallelTasks, function(err, results) {
         if (err) {
             return done(err);
         }

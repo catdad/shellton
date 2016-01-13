@@ -1,4 +1,4 @@
-/* jshint node: true */
+/* jshint node: true, -W030 */
 /* global describe, it */
 
 var chai = require('chai');
@@ -37,7 +37,6 @@ function addTests(shell) {
         it('executes a string command', function(done) {
             shell('echo this is a test', function(err, stdout, stderr) {
                 testSuccessResult(err, stdout, stderr, 'this is a test');
-                
                 done();
             });
         });
@@ -117,6 +116,27 @@ function addTests(shell) {
 
         it('does not call end on a process stream');
         it('calls end on any other stream');
+        
+        describe('streams from', function() {
+            it('an stdin stream', function(done) {
+                if (shell === shellton.spawn) {
+                    return this.skip();
+                }
+                
+                var input = through();
+                var opts = {
+                    task: 'node -e "process.stdin.pipe(process.stdout)"',
+                    stdin: input
+                };
+                
+                shell(opts, function(err, stdout, stderr) {
+                    testSuccessResult(err, stdout, stderr, 'this is a test');
+                    done();
+                });
+                
+                input.end('this is a test\n');
+            });
+        });
 
         describe('calls a callback', function() {
             it('with err if the command does not exist', function(done) {
