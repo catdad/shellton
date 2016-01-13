@@ -123,9 +123,15 @@ function addTests(shell) {
 //                    return this.skip();
 //                }
                 
+                var command = platform === 'win' ?
+                    // because for some reason, Windows can't handle the
+                    // quotes, but Linux throws without them
+                    'node -e process.stdin.pipe(process.stdout)' :
+                    'node -e "process.stdin.pipe(process.stdout)"';
+                
                 var input = through();
                 var opts = {
-                    task: 'node -e "process.stdin.pipe(process.stdout)"',
+                    task: command,
                     stdin: input
                 };
                 
