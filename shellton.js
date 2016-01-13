@@ -126,26 +126,15 @@ function spawn(command, done) {
         }
     };
     
-    /*
     if (config.stdin && config.stdin.pipe) {
-        // TODO is this right?
-//        task.stdin.setEncoding('utf-8');
-        config.stdin.pipe(task.stdin, { end: 'false' });
+        config.stdin.pipe(task.stdin);
         
         // add a task to make sure this stream ends as well,
         // before exiting the task
         parallelTasks.stdin = function(next) {
-//            config.stdin.on('data', function(chunk) {
-//                console.log('in chunk', chunk.toString());
-//                task.stdin.write(chunk.toString());
-//            });
-            config.stdin.on('end', function() {
-                task.stdin.end();
-                next();
-            });
+            config.stdin.on('end', next);
         };
     }
-    */
     
     async.parallel(parallelTasks, function(err, results) {
         if (err) {

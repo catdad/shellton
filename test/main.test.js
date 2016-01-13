@@ -119,9 +119,9 @@ function addTests(shell) {
         
         describe('streams from', function() {
             it('an stdin stream', function(done) {
-                if (shell === shellton.spawn) {
-                    return this.skip();
-                }
+//                if (shell === shellton.spawn) {
+//                    return this.skip();
+//                }
                 
                 var input = through();
                 var opts = {
