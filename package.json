@@ -1,6 +1,6 @@
 {
   "name": "shellton",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "execute external processed with a simple API",
   "main": "shellton.js",
   "dependencies": {
