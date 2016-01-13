@@ -36,14 +36,14 @@ function addTests(shell) {
     return function() {
         it('executes a string command', function(done) {
             shell('echo this is a test', function(err, stdout, stderr) {
-                testSuccessResult(err, stdout, stderr, 'this is a test');
+                testSuccessResult(err, stdout, stderr, 'this is a test', '');
                 done();
             });
         });
 
         it('executes a command with a full options object', function(done) {
             shell({ task: 'echo this is a test' }, function(err, stdout, stderr) {
-                testSuccessResult(err, stdout, stderr, 'this is a test');
+                testSuccessResult(err, stdout, stderr, 'this is a test', '');
                 done();
             });
         });
@@ -54,7 +54,7 @@ function addTests(shell) {
                 task: platform === 'win' ? 'dir' : 'ls',
                 cwd: cwd
             }, function(err, stdout, stderr) {
-                testSuccessResult(err, stdout, stderr, /main\.test\.js/i);
+                testSuccessResult(err, stdout, stderr, /main\.test\.js/i, '');
                 done();
             });
         });
@@ -65,7 +65,7 @@ function addTests(shell) {
                 task: platform === 'win' ? 'echo %ABCD%' : 'echo $ABCD',
                 env: env
             }, function(err, stdout, stderr) {
-                testSuccessResult(err, stdout, stderr, 'testval');
+                testSuccessResult(err, stdout, stderr, 'testval', '');
                 done();
             });
         });
@@ -119,10 +119,6 @@ function addTests(shell) {
         
         describe('streams from', function() {
             it('an stdin stream', function(done) {
-//                if (shell === shellton.spawn) {
-//                    return this.skip();
-//                }
-                
                 var command = platform === 'win' ?
                     // because for some reason, Windows can't handle the
                     // quotes, but Linux throws without them
@@ -136,7 +132,7 @@ function addTests(shell) {
                 };
                 
                 shell(opts, function(err, stdout, stderr) {
-                    testSuccessResult(err, stdout, stderr, 'this is a test');
+                    testSuccessResult(err, stdout, stderr, 'this is a test', '');
                     done();
                 });
                 
@@ -157,14 +153,14 @@ function addTests(shell) {
             it('with an stdout parameter', function(done) {
                 shell('echo this is a test', function(err, stdout, stderr) {
                     expect(stdout).to.not.be.undefined;
-                    testSuccessResult(err, stdout, stderr, 'this is a test');
+                    testSuccessResult(err, stdout, stderr, 'this is a test', '');
                     done();
                 });
             });
             it('with an stderr parameter', function(done) {
                 shell('echo this is a test 1>&2', function(err, stdout, stderr) {
                     expect(stderr).to.not.be.undefined;
-                    testSuccessResult(err, stdout, stderr, undefined, 'this is a test');
+                    testSuccessResult(err, stdout, stderr, '', 'this is a test');
                     done();
                 });
             });
