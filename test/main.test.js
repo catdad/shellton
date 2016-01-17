@@ -121,7 +121,7 @@ function addTests(shell) {
             it('an stdin stream', function(done) {
                 var command = platform === 'win' ?
                     // because for some reason, Windows can't handle the
-                    // quotes, but Linux throws without them
+                    // quotes, but Linux throws without them... at least for spawn
                     'node -e process.stdin.pipe(process.stdout)' :
                     'node -e "process.stdin.pipe(process.stdout)"';
                 

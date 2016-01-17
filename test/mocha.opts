@@ -1,1 +1,1 @@
-test/**/*.test.js --reporter dot --ui bdd
+test/**/*.test.js --reporter spec --ui bdd
