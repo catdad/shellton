@@ -9,13 +9,13 @@
 [8]: https://www.npmjs.com/package/shellton
 [9]: https://img.shields.io/npm/v/shellton.svg
 
-# Install
+## Install
 
     npm install --save shellton
     
-# Use
+## Use
 
-## Basic example
+### Basic example
 
 ```javascript
 var shellton = require('shellton');
@@ -25,7 +25,7 @@ shellton('echo all the things', function(err, stdout, stderr) {
 });
 ```
 
-## Using IO streams
+### Using IO streams
 
 You can pipe the standard output streams from the child process, as such:
 
@@ -59,6 +59,7 @@ shellton({
 Use your imagination here, and you can come up with some much more useful cases.
 
 ```javascript
+var shellton = require('shellton');
 var through = require('through2');
 var chalk = require('chalk');
 
@@ -79,7 +80,7 @@ function colorStream(name, writeStream) {
 var input = through();
 // write to the parent's output stream in green
 var output = colorStream('greeg', process.stdout);
-// write to te parent's error stream in red
+// write to the parent's error stream in red
 var error = colorStream('red', process.stderr);
 
 shellton({
@@ -91,6 +92,7 @@ shellton({
     console.log('process exited');
 });
 
+// use any dynamically generated javascript
 input.write('console.log("output is green");');
 input.write('console.error("errors are red");');
 input.end();
