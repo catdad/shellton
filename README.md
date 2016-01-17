@@ -66,8 +66,7 @@ var chalk = require('chalk');
 function colorStream(name, writeStream) {
     writeStream = writeStream || process.stdout;
     
-    var colorFunc = chalk[name] || chalk.white;
-    colorFunc.bind(chalk);
+    var colorFunc = (chalk[name] || chalk.white).bind(chalk);
     
     var stream = through();
     stream.on('data', function(chunk) {
@@ -88,8 +87,6 @@ shellton({
     stdin: input,
     stdout: output,
     stderr: error
-}, function(err, stdout, stderr) {
-    console.log('process exited');
 });
 
 // use any dynamically generated javascript

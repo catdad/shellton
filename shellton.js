@@ -8,6 +8,13 @@ var async = require('async');
 var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
+var noop = function() {};
+function validateFunction(obj) {
+    return (obj && ({}).toString.call(obj) === '[object Function]') ?
+        obj : 
+        noop;
+}
+
 function getConfig(command) {
     var config;
     
@@ -36,6 +43,7 @@ function pipeStream(from, to, config) {
 
 function exec(command, done) {
     var config = getConfig(command);
+    done = validateFunction(done);
     
     var task = child.exec(config.task, {
         cwd: config.cwd || process.cwd(),
@@ -60,6 +68,7 @@ function exec(command, done) {
 }
 
 function spawn(command, done) {
+    done = validateFunction(done);
     var config = getConfig(command);
     var env = config.env || Object.create(process.env);
     

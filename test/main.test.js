@@ -164,6 +164,25 @@ function addTests(shell) {
                     done();
                 });
             });
+            
+            it('with nothing, when no callback is specified', function(done) {
+                var out = through();
+                shell({
+                    task: 'echo llamas',
+                    stdout: out
+                });
+                
+                var data = [];
+                
+                out.on('data', function(chunk) {
+                    data.push(chunk);
+                });
+                
+                out.on('end', function() {
+                    expect(Buffer.concat(data).toString().trim()).to.equal('llamas');
+                    done();
+                });
+            });
         });    
     };
 }
