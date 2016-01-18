@@ -78,7 +78,7 @@ function colorStream(name, writeStream) {
 
 var input = through();
 // write to the parent's output stream in green
-var output = colorStream('greeg', process.stdout);
+var output = colorStream('green', process.stdout);
 // write to the parent's error stream in red
 var error = colorStream('red', process.stderr);
 
@@ -94,5 +94,33 @@ input.write('console.log("output is green");');
 input.write('console.error("errors are red");');
 input.end();
 ```
+
+## API
+
+Shellton will use the `spawn` method from `child_process` to execute tasks by default. However, it supports `exec` as well with the same API, for when you need it. You can select which one to use, as such:
+
+```javascript
+var shellton = require('shellton');
+
+shellton.spawn('echo spawn task');
+shellton.exec('echo exec task');
+```
+
+### `shellton(options, callback)`
+
+`options` {string | Object} : The options defining the external task to execute. This parameter is required.
+- When given a string, this is the command line command being executed. You can supply a full command, as you would normally type into bash or the Windows command prompt.
+- When given an object, the following properties are available:
+  - `task` {string} : the command to executed
+  - `stdin` {Stream} : a stream to pipe into the command
+  - `stdout` {Stream} : a stream to where the standard output of the command will be piped
+  - `stderr` {Stream} : a stream to where the standard error of the command will be piped
+  - `cwd` {string} : the directory from where the command will be executed. The default is the current directory of the parent process
+  - `env` {Object} : the environment variables for the child process. The default is the environment of the parent process
+  
+`callback` {function} : The callback to call when the child process exists. This parameter is optional. It receives the following parameters, in order:
+- `error` {Error} : An error that occurred when executing the command. This generally means the command exited with a code other than 0. `error.code` specifies the exit code of the command.
+- `stdout` {string} : A string representation of the standard output of the command. If the command outputs binary, you will likely want to read directly from `stdout` in the `options` object.
+- `stderr` {string} : A string representation of the standard error of the command. If the command outputs binary, you will likely want to read directly from `stderr` in the `options` object.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-17159207-7/shellton/readme?flat)](https://github.com/igrigorik/ga-beacon)
