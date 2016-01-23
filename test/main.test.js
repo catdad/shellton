@@ -114,8 +114,19 @@ function addTests(shell) {
             });
         });
 
-        it('does not call end on a process stream');
-        it('calls end on any other stream');
+        it('does not crash on a process stream', function(done) {
+            var command = platform === 'win' ?
+                'node -e process.stdout.write(\'a\')' :
+                'node -e "process.stdout.write(\'a\')"';
+            
+            shell({
+                task: command,
+                stdout: process.stdout
+            }, function(err, stdout, stderr) {
+                expect(stdout).to.equal('a');
+                done();
+            });
+        });
         
         describe('streams from', function() {
             it('an stdin stream', function(done) {

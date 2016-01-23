@@ -76,15 +76,15 @@ function spawn(command, done) {
     var pipeStdout = true;
     var pipeStderr = true;
     
-    if (isIOStream(config.stdout)) {
-        stdio[1] = config.stdout;
-        pipeStdout = false;
-    }
-    
-    if (isIOStream(config.stderr)) {
-        stdio[2] = config.stderr;
-        pipeStderr = false;
-    }
+//    if (isIOStream(config.stdout)) {
+//        stdio[1] = config.stdout;
+//        pipeStdout = false;
+//    }
+//    
+//    if (isIOStream(config.stderr)) {
+//        stdio[2] = config.stderr;
+//        pipeStderr = false;
+//    }
     
     var executable = platform === 'win' ? 'cmd.exe' : 'bash';
     var firstToken = platform === 'win' ? '/c' : '-c';
