@@ -115,15 +115,19 @@ function addTests(shell) {
         });
 
         it('does not crash on a process stream', function(done) {
+            // invisible space, plus move cursor back,
+            // so that the results still look pretty
+            var char = '\u200B\033[1D';
+            
             var command = platform === 'win' ?
-                'node -e process.stdout.write(\'a\')' :
-                'node -e "process.stdout.write(\'a\')"';
+                'node -e process.stdout.write(\'' + char + '\')' :
+                'node -e "process.stdout.write(\'' + char + '\')"';
             
             shell({
                 task: command,
                 stdout: process.stdout
             }, function(err, stdout, stderr) {
-                expect(stdout).to.equal('a');
+                expect(stdout).to.equal(char);
                 done();
             });
         });
