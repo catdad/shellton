@@ -146,11 +146,7 @@ function spawn(command, done) {
     }
     
     async.parallel(parallelTasks, function(err, results) {
-        if (err) {
-            return done(err);
-        }
-        
-        done(undefined, results.stdout, results.stderr);
+        done(err || null, results.stdout, results.stderr);
     });
     
     if (pipeStdout && config.stdout) {

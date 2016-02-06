@@ -198,6 +198,24 @@ function addTests(shell) {
                     done();
                 });
             });
+            
+            it('provides stdio streams even when there is an error', function(done) {
+                var script = "process.stdout.write('1');process.stderr.write('2');process.exit(1);";
+
+                var command = platform === 'win' ?
+                    'node -e ' + script :
+                    'node -e "' + script + '"';
+
+                shell({
+                    task: command
+                }, function(err, stdout, stderr) {
+                    expect(err).to.be.instanceof(Error);
+                    
+                    expect(stdout.trim()).to.equal('1');
+                    expect(stderr.trim()).to.equal('2');
+                    done();
+                });
+            });
         });    
     };
 }
