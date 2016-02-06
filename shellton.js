@@ -41,6 +41,18 @@ function pipeStream(from, to, config) {
     from.pipe(to, opts);
 }
 
+function collectStream(stream, callback) {
+    var body = [];
+    
+    stream.on('data', function(chunk) {
+        body.push(chunk);
+    });
+
+    stream.on('end', function() {
+        callback(undefined, Buffer.concat(body).toString());
+    });
+}
+
 function exec(command, done) {
     var config = getConfig(command);
     done = validateFunction(done);
@@ -102,26 +114,10 @@ function spawn(command, done) {
     
     var parallelTasks = {
         stdout: function(next) {
-            var stdoutBody = [];
-    
-            task.stdout.on('data', function(chunk) {
-                stdoutBody.push(chunk);
-            });
-
-            task.stdout.on('end', function() {
-                next(undefined, Buffer.concat(stdoutBody).toString());
-            });
+            collectStream(task.stdout, next);
         },
         stderr: function(next) {
-            var stderrBody = [];
-    
-            task.stderr.on('data', function(chunk) {
-                stderrBody.push(chunk);
-            });
-            
-            task.stderr.on('end', function() {
-                next(undefined, Buffer.concat(stderrBody).toString());
-            });
+            collectStream(task.stderr, next);
         },
         exitCode: function(next) {
             task.on('exit', function(code) {
