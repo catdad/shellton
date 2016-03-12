@@ -82,7 +82,6 @@ function exec(command, done) {
 function spawn(command, done) {
     done = validateFunction(done);
     var config = getConfig(command);
-    var env = config.env || Object.create(process.env);
     
     var stdio = [ 'pipe', 'pipe', 'pipe' ];
     var pipeStdout = true;
@@ -156,8 +155,38 @@ function spawn(command, done) {
     return task;
 }
 
+function extendToString(target) {
+    var args = [].slice.call(arguments, 1);
+    
+    function extend(to, from) {
+        for (var i in from) {
+            to[i] = from[i].toString();
+        }
+        
+        return to;
+    }
+    
+    args.forEach(function(val) {
+        extend(target, val);
+    });
+    
+    return target;
+}
+
+function env(obj) {
+    var copy = extendToString({}, process.env);
+    
+    if (!obj || typeof obj !== 'object') {
+        return copy;
+    }
+    
+    return extendToString(copy, obj);
+}
+
 // module.exports = exec;
 module.exports = spawn;
 
 module.exports.spawn = spawn;
 module.exports.exec = exec;
+
+module.exports.env = env;

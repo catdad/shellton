@@ -223,3 +223,39 @@ function addTests(shell) {
 //describe('[Module Export]', addTests(shellton));
 describe('[Spawn]', addTests(shellton.spawn));
 describe('[Exec]', addTests(shellton.exec));
+
+describe('[env]', function() {
+    it('returns a copy of process.env', function() {
+        var newEnv = shellton.env();
+        
+        expect(newEnv).not.to.equal(process.env);
+        expect(newEnv).to.deep.equal(process.env);
+    });
+    
+    it('extends process.env with the provided object', function() {
+        var keys = Object.keys(process.env);
+        var testKey = 'unicorn_llama';
+        keys.push(testKey);
+        
+        var testEnv = {};
+        testEnv[testKey] = 1;
+        
+        var newEnv = shellton.env(testEnv);
+        
+        expect(newEnv).to.have.all.keys(keys);
+        expect(newEnv).to.have.property(testKey).and.to.equal(testEnv[testKey].toString());
+    });
+    
+    it('does not modify the actual process.env', function() {
+        var testKey = 'unicorn_llama';
+        
+        var testEnv = {};
+        testEnv[testKey] = 1;
+        
+        var newEnv = shellton.env(testEnv);
+        
+        expect(process.env).to.not.have.property(testKey);
+        expect(newEnv).to.have.property(testKey).and.to.equal(testEnv[testKey].toString());
+    });
+    
+});
