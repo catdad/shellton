@@ -49,4 +49,6 @@ Temporary Items
 # Node files
 node_modules/
 coverage/
+test/
 .npmrc
+.travis.yml
