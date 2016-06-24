@@ -15,8 +15,9 @@
     "through2": "^2.0.0"
   },
   "scripts": {
-    "test": "istanbul cover --dir coverage node_modules/mocha/bin/_mocha",
-    "mocha": "mocha --reporter spec",
+    "test": "mocha",
+    "coverage": "istanbul cover --dir coverage node_modules/mocha/bin/_mocha",
+    "mocha": "mocha",
     "dot": "mocha --reporter dot"
   },
   "repository": {
