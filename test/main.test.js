@@ -70,9 +70,11 @@ function addTests(shell) {
             });
         });
         
-        it('can execute NPM modules from bin', function(done) {
+        it('can execute NPM modules from bin when env is set', function(done) {
             shell({
-                task: 'istanbul help'
+                task: 'istanbul help',
+                // env must be set
+                env: {}
             }, function(err, stdout, stderr) {
                 expect(err).to.not.be.ok;
                 expect(stdout.trim()).to.equal('');
