@@ -111,12 +111,12 @@ shellton.exec('echo exec task');
 `options` {string | Object} : The options defining the external task to execute. This parameter is required.
 - When given a string, this is the command line command being executed. You can supply a full command, as you would normally type into bash or the Windows command prompt.
 - When given an object, the following properties are available:
-  - `task` {string} : the command to executed
-  - `stdin` {Stream} : a stream to pipe into the command
-  - `stdout` {Stream} : a stream to where the standard output of the command will be piped
-  - `stderr` {Stream} : a stream to where the standard error of the command will be piped
-  - `cwd` {string} : the directory from where the command will be executed. The default is the current directory of the parent process
-  - `env` {Object} : the environment variables for the child process. The default is the environment of the parent process
+  - `task` {string} : the command to executed.
+  - `stdin` {Stream} : a stream to pipe into the command.
+  - `stdout` {Stream} : a stream to where the standard output of the command will be piped.
+  - `stderr` {Stream} : a stream to where the standard error of the command will be piped.
+  - `cwd` {string} : the directory from where the command will be executed. The default is the current directory of the parent process.
+  - `env` {Object} : the environment variables for the child process. Values here will be merged with an overwrite values in the current `process.env`.
   
 `callback` {function} : The callback to call when the child process exists. This parameter is optional. It receives the following parameters, in order:
 - `error` {Error} : An error that occurred when executing the command. This generally means the command exited with a code other than 0. `error.code` specifies the exit code of the command.
