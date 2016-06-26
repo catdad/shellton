@@ -4,7 +4,8 @@
   "description": "execute external processed with a simple API",
   "main": "shellton.js",
   "dependencies": {
-    "async": "^1.5.2"
+    "async": "^1.5.2",
+    "lodash": "^4.13.1"
   },
   "devDependencies": {
     "chai": "^3.4.1",
