@@ -70,6 +70,22 @@ function addTests(shell) {
             });
         });
         
+        it('can execute NPM modules from bin when env is set', function(done) {
+            shell({
+                task: 'istanbul help',
+                // env must be set
+                env: {}
+            }, function(err, stdout, stderr) {
+                expect(err).to.not.be.ok;
+                expect(stdout.trim()).to.equal('');
+                
+                expect(stderr).to.be.a('string')
+                    .and.to.have.length.above(50);
+                
+                done();
+            });
+        });
+        
         describe('streams to', function() {
             function testStream(opts, stream, done) {
                 var shellOut, streamOut, c = 0;

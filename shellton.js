@@ -3,6 +3,7 @@
 var path = require('path');
 var child = require('child_process');
 var async = require('async');
+var _ = require('lodash');
 
 // Add the node_modules to the PATH
 var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
@@ -28,6 +29,10 @@ function getConfig(command) {
     }
     
     return config;
+}
+
+function getEnv(config) {
+    return _.extend({}, config.env || {}, process.env);
 }
 
 function isIOStream(stream) {
@@ -59,7 +64,7 @@ function exec(command, done) {
     
     var task = child.exec(config.task, {
         cwd: config.cwd || process.cwd(),
-        env: config.env || process.env
+        env: getEnv(config)
     }, function(err, stdout, stderr) {
         done(err, stdout, stderr);
     });
@@ -102,7 +107,7 @@ function spawn(command, done) {
     var tokens = [firstToken, config.task];
     
     var task = child.spawn(executable, tokens, {
-        env: config.env || process.env,
+        env: getEnv(config),
         cwd: config.cwd || process.cwd(),
         stdio: stdio
     });
