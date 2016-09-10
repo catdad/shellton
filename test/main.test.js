@@ -59,8 +59,9 @@ function addTests(shell) {
             });
         });
         it('takes an env', function(done) {
-            var env = {};
-            env.ABCD = 'testval';
+            var env = {
+                ABCD: 'testval'
+            };
             shell({
                 task: platform === 'win' ? 'echo %ABCD%' : 'echo $ABCD',
                 env: env
@@ -74,7 +75,12 @@ function addTests(shell) {
             shell({
                 task: 'istanbul help',
                 // env must be set
-                env: {}
+                env: {
+                    // set both, because Windows
+                    PATH: '',
+                    Path: '',
+                    path: ''
+                }
             }, function(err, stdout, stderr) {
                 expect(err).to.not.be.ok;
                 expect(stdout.trim()).to.equal('');

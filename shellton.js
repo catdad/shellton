@@ -2,18 +2,18 @@
 
 var path = require('path');
 var child = require('child_process');
+
 var async = require('async');
 var _ = require('lodash');
 
 // Add the node_modules to the PATH
-var nodeModulesGlobal = path.resolve(__dirname, 'node_modules', '.bin');
+var nodeModulesBin = path.resolve(__dirname, 'node_modules', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
-var noop = function() {};
 function validateFunction(obj) {
     return (obj && ({}).toString.call(obj) === '[object Function]') ?
         obj : 
-        noop;
+        _.noop;
 }
 
 function getConfig(command) {
@@ -32,7 +32,15 @@ function getConfig(command) {
 }
 
 function getEnv(config) {
-    return _.extend({}, config.env || {}, process.env);
+    var env = _.extend({}, config.env || {}, process.env);
+    var envPath = env.PATH || env.Path || env.path;
+    envPath = envPath.replace(new RegExp(path.delimiter + '$'), '');
+    envPath += path.delimiter + nodeModulesBin;
+    
+    // overwrite both, because Windows
+    env.PATH = env.Path = envPath;
+    
+    return env;
 }
 
 function isIOStream(stream) {
