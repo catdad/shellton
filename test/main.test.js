@@ -58,6 +58,7 @@ function addTests(shell) {
                 done();
             });
         });
+        
         it('takes an env', function(done) {
             var env = {
                 ABCD: 'testval'
@@ -125,6 +126,7 @@ function addTests(shell) {
                 
                 testStream(opts, stream, done);
             });
+            
             it('an stderr stream', function(done) {
                 var stream = through();
                 var opts = {
@@ -155,6 +157,7 @@ function addTests(shell) {
         });
         
         describe('streams from', function() {
+            
             it('an stdin stream', function(done) {
                 var command = platform === 'win' ?
                     // because for some reason, Windows can't handle the
@@ -178,6 +181,7 @@ function addTests(shell) {
         });
 
         describe('calls a callback', function() {
+            
             it('with err if the command does not exist', function(done) {
                 var notExistErrCode = platform === 'win' ? 1 : 127;
                 
@@ -187,6 +191,7 @@ function addTests(shell) {
                     done();
                 });
             });
+            
             it('with an stdout parameter', function(done) {
                 shell('echo this is a test', function(err, stdout, stderr) {
                     expect(stdout).to.not.be.undefined;
@@ -194,6 +199,7 @@ function addTests(shell) {
                     done();
                 });
             });
+            
             it('with an stderr parameter', function(done) {
                 shell('echo this is a test 1>&2', function(err, stdout, stderr) {
                     expect(stderr).to.not.be.undefined;
@@ -247,6 +253,7 @@ describe('[Spawn]', addTests(shellton.spawn));
 describe('[Exec]', addTests(shellton.exec));
 
 describe('[env]', function() {
+    
     it('returns a copy of process.env', function() {
         var newEnv = shellton.env();
         
