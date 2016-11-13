@@ -7,9 +7,12 @@ var expect = chai.expect;
 var through = require('through2');
 var es = require('event-stream');
 var _ = require('lodash');
+var isIo = require('is-io');
+
+var platform = /^win/.test(process.platform) ? 'win' : 'nix';
+var node = (platform === 'win' && isIo) ? 'iojs' : 'node';
 
 var shellton = require('../shellton.js');
-var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
 function isRegex(val) {
     return Object.prototype.toString.call(val) === '[object RegExp]';
@@ -145,8 +148,8 @@ function addTests(shell) {
             var char = '\u200B\033[1D';
             
             var command = platform === 'win' ?
-                'node -e process.stdout.write(\'' + char + '\')' :
-                'node -e "process.stdout.write(\'' + char + '\')"';
+                node + ' -e process.stdout.write(\'' + char + '\')' :
+                node + ' -e "process.stdout.write(\'' + char + '\')"';
             
             shell({
                 task: command,
@@ -163,8 +166,8 @@ function addTests(shell) {
                 var command = platform === 'win' ?
                     // because for some reason, Windows can't handle the
                     // quotes, but Linux throws without them... at least for spawn
-                    'node -e process.stdin.pipe(process.stdout)' :
-                    'node -e "process.stdin.pipe(process.stdout)"';
+                    node + ' -e process.stdin.pipe(process.stdout)' :
+                    node + ' -e "process.stdin.pipe(process.stdout)"';
                 
                 var input = through();
                 var opts = {
@@ -232,8 +235,8 @@ function addTests(shell) {
                 var script = "process.stdout.write('1');process.stderr.write('2');process.exit(1);";
 
                 var command = platform === 'win' ?
-                    'node -e ' + script :
-                    'node -e "' + script + '"';
+                    node + ' -e ' + script :
+                    node + ' -e "' + script + '"';
 
                 shell({
                     task: command
