@@ -1,7 +1,8 @@
 # shellton
 
 
-[![Build][1]][2]
+[![Linux Build][1]][2]
+[![Windows Build][12]][13]
 [![Test Coverage][3]][4]
 [![Code Climate][5]][6]
 [![Downloads][7]][8]
@@ -23,6 +24,9 @@
 
 [10]: https://david-dm.org/catdad/shellton.svg
 [11]: https://david-dm.org/catdad/shellton
+
+[12]: https://ci.appveyor.com/project/catdad/shellton
+[13]: https://img.shields.io/appveyor/ci/catdad/shellton.svg
 
 ## Install
 
