@@ -262,7 +262,9 @@ describe('[env]', function() {
         // so let's compare each property separately...
         // but only on Node 4
         _.forEach(process.env, function(val, key) {
-            expect(newEnv[key]).to.equal(val);
+            if (val !== newEnv[key]) {
+                console.error('inconsistent env key "%s", expect "%s" to be "%s', val, newEnv[key]);
+            }
         });
         
         // make sure there are the same amount of keys
@@ -270,8 +272,7 @@ describe('[env]', function() {
         
         // make sure they are different objects
         expect(newEnv).not.to.equal(process.env);
-        
-//        expect(newEnv).to.deep.equal(process.env);
+        expect(newEnv).to.deep.equal(process.env);
     });
     
     it('extends process.env with the provided object', function() {
