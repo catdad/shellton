@@ -25,7 +25,7 @@
 [10]: https://david-dm.org/catdad/shellton.svg
 [11]: https://david-dm.org/catdad/shellton
 
-[12]: https://img.shields.io/appveyor/ci/catdad/shellton.svg
+[12]: https://ci.appveyor.com/api/projects/status/github/catdad/shellton?branch=master&svg=true
 [13]: https://ci.appveyor.com/project/catdad/shellton
 
 ## Install
