@@ -114,11 +114,17 @@ function spawn(command, done) {
     var firstToken = platform === 'win' ? '/c' : '-c';
     var tokens = [firstToken, config.task];
     
-    var task = child.spawn(executable, tokens, {
+    var opts = {
         env: getEnv(config),
         cwd: config.cwd || process.cwd(),
         stdio: stdio
-    });
+    };
+    
+    if (/^win/.test(process.platform)) {
+        opts.windowsVerbatimArguments = config.windowsVerbatimArguments !== false;
+    }
+    
+    var task = child.spawn(executable, tokens, opts);
     
     task.on('error', function(err) {
         done(err);
