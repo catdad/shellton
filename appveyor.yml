@@ -22,3 +22,7 @@ test_script:
   - npm --version
   # run tests
   - npm test
+
+# Don't actually build.
+# No idea what this does, but it was in the example file
+build: off
