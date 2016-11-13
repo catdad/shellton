@@ -6,9 +6,13 @@ var expect = chai.expect;
 
 var through = require('through2');
 var es = require('event-stream');
+var _ = require('lodash');
+var isIo = require('is-io');
+
+var platform = /^win/.test(process.platform) ? 'win' : 'nix';
+var node = (platform === 'win' && isIo) ? 'iojs' : 'node';
 
 var shellton = require('../shellton.js');
-var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
 function isRegex(val) {
     return Object.prototype.toString.call(val) === '[object RegExp]';
@@ -144,8 +148,8 @@ function addTests(shell) {
             var char = '\u200B\033[1D';
             
             var command = platform === 'win' ?
-                'node -e process.stdout.write(\'' + char + '\')' :
-                'node -e "process.stdout.write(\'' + char + '\')"';
+                node + ' -e process.stdout.write(\'' + char + '\')' :
+                node + ' -e "process.stdout.write(\'' + char + '\')"';
             
             shell({
                 task: command,
@@ -162,7 +166,7 @@ function addTests(shell) {
             winit('can accept quotes commands', function(done) {
                 // This is the correct command to actually issue on Windows,
                 // and is the only version that actually works on Linux.
-                var command = 'node -e "process.stdin.pipe(process.stdout)"';
+                var command = node + ' -e "process.stdin.pipe(process.stdout)"';
                 
                 var input = through();
                 var opts = {
@@ -181,7 +185,7 @@ function addTests(shell) {
             winit('can accept unquoted commands', function(done) {
                 // This is technically not correct, but it works on Windows.
                 // Since it used to work in 2.x, I am keeping this in for now.
-                var command = 'node -e process.stdin.pipe(process.stdout)';
+                var command = node + ' -e process.stdin.pipe(process.stdout)';
                 
                 var input = through();
                 var opts = {
@@ -201,7 +205,7 @@ function addTests(shell) {
                 var spawnit = (shell === shellton.spawn) ? winit : it.skip;
             
                 spawnit('errors for quoted commands with windowsVerbatimArguments set to false', function(done) {
-                    var command = 'node -e "process.stdin.pipe(process.stdout)"';
+                    var command = node + ' -e "process.stdin.pipe(process.stdout)"';
 
                     var input = through();
                     var opts = {
@@ -226,7 +230,7 @@ function addTests(shell) {
         describe('streams from', function() {
             
             it('an stdin stream', function(done) {
-                var command = 'node -e "process.stdin.pipe(process.stdout)"';
+                var command = node + ' -e "process.stdin.pipe(process.stdout)"';
                 
                 var input = through();
                 var opts = {
@@ -294,8 +298,8 @@ function addTests(shell) {
                 var script = "process.stdout.write('1');process.stderr.write('2');process.exit(1);";
 
                 var command = platform === 'win' ?
-                    'node -e ' + script :
-                    'node -e "' + script + '"';
+                    node + ' -e ' + script :
+                    node + ' -e "' + script + '"';
 
                 shell({
                     task: command
@@ -319,7 +323,8 @@ describe('[env]', function() {
     
     it('returns a copy of process.env', function() {
         var newEnv = shellton.env();
-        
+
+        // make sure they are different objects
         expect(newEnv).not.to.equal(process.env);
         expect(newEnv).to.deep.equal(process.env);
     });

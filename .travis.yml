@@ -7,6 +7,7 @@ node_js:
   - "4.2"
   - "iojs"
   - "0.12"
+  - "0.10"
   
 os:
   - linux
@@ -21,6 +22,7 @@ before_install:
 addons:
   code_climate:
     repo_token: f50b5c7ebd68103f6233b46602a1607896b8ddcfe25355a11d865aa5acd60758
+
 after_script:
   - npm run coverage
   - codeclimate-test-reporter < coverage/lcov.info
