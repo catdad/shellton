@@ -52,3 +52,4 @@ coverage/
 test/
 .npmrc
 .travis.yml
+appveyor.yml
