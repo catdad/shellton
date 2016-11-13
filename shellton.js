@@ -186,10 +186,10 @@ function extendToString(target) {
     return target;
 }
 
-function env(obj) {
-    var copy = extendToString({}, process.env);
+function newEnv(obj) {
+    var copy = _.cloneDeep(process.env);
     
-    if (!obj || typeof obj !== 'object') {
+    if (!_.isPlainObject(obj)) {
         return copy;
     }
     
@@ -202,4 +202,4 @@ module.exports = spawn;
 module.exports.spawn = spawn;
 module.exports.exec = exec;
 
-module.exports.env = env;
+module.exports.env = newEnv;
