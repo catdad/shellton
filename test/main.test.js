@@ -156,14 +156,77 @@ function addTests(shell) {
             });
         });
         
+        describe('on Windows', function() {
+            var winit = (platform === 'win') ? it : it.skip;
+            
+            winit('can accept quotes commands', function(done) {
+                // This is the correct command to actually issue on Windows,
+                // and is the only version that actually works on Linux.
+                var command = 'node -e "process.stdin.pipe(process.stdout)"';
+                
+                var input = through();
+                var opts = {
+                    task: command,
+                    stdin: input
+                };
+                
+                shell(opts, function(err, stdout, stderr) {
+                    testSuccessResult(err, stdout, stderr, 'this is a test', '');
+                    done();
+                });
+                
+                input.end('this is a test\n');
+            });
+            
+            winit('can accept unquoted commands', function(done) {
+                // This is technically not correct, but it works on Windows.
+                // Since it used to work in 2.x, I am keeping this in for now.
+                var command = 'node -e process.stdin.pipe(process.stdout)';
+                
+                var input = through();
+                var opts = {
+                    task: command,
+                    stdin: input
+                };
+                
+                shell(opts, function(err, stdout, stderr) {
+                    testSuccessResult(err, stdout, stderr, 'this is a test', '');
+                    done();
+                });
+                
+                input.end('this is a test\n');
+            });
+            
+            describe('when using spawn', function() {
+                var spawnit = (shell === shellton.spawn) ? winit : it.skip;
+            
+                spawnit('errors for quoted commands with windowsVerbatimArguments set to false', function(done) {
+                    var command = 'node -e "process.stdin.pipe(process.stdout)"';
+
+                    var input = through();
+                    var opts = {
+                        task: command,
+                        stdin: input,
+                        windowsVerbatimArguments: false
+                    };
+
+                    shell(opts, function(err, stdout, stderr) {
+                        // because Windows
+                        expect(err).to.equal(null);
+                        expect(stdout).to.equal(stderr).to.equal('');
+
+                        done();
+                    });
+
+                    input.end('this is a test\n');
+                });    
+            });
+        });
+        
         describe('streams from', function() {
             
             it('an stdin stream', function(done) {
-                var command = platform === 'win' ?
-                    // because for some reason, Windows can't handle the
-                    // quotes, but Linux throws without them... at least for spawn
-                    'node -e process.stdin.pipe(process.stdout)' :
-                    'node -e "process.stdin.pipe(process.stdout)"';
+                var command = 'node -e "process.stdin.pipe(process.stdout)"';
                 
                 var input = through();
                 var opts = {
