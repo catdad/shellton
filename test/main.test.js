@@ -6,6 +6,7 @@ var expect = chai.expect;
 
 var through = require('through2');
 var es = require('event-stream');
+var _ = require('lodash');
 
 var shellton = require('../shellton.js');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
@@ -256,9 +257,21 @@ describe('[env]', function() {
     
     it('returns a copy of process.env', function() {
         var newEnv = shellton.env();
+
+        // this test sucks in appveyor for some reason,
+        // so let's compare each property separately...
+        // but only on Node 4
+        _.forEach(process.env, function(val, key) {
+            expect(newEnv[key]).to.equal(val);
+        });
         
+        // make sure there are the same amount of keys
+        expect(_.keys(newEnv).length).to.equal(_.keys(process.env).length);
+        
+        // make sure they are different objects
         expect(newEnv).not.to.equal(process.env);
-        expect(newEnv).to.deep.equal(process.env);
+        
+//        expect(newEnv).to.deep.equal(process.env);
     });
     
     it('extends process.env with the provided object', function() {
