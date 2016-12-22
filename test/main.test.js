@@ -343,6 +343,25 @@ describe('[env]', function() {
         expect(newEnv).to.have.property(testKey).and.to.equal(testEnv[testKey].toString());
     });
     
+    it('extends process.env with multiple provided objects', function() {
+        var keys = Object.keys(process.env);
+        keys.push('unicorn');
+        keys.push('fruit');
+        
+        var newEnv = shellton.env({
+            unicorn: 'tea'
+        }, {
+            unicorn: 'pizza'
+        }, {
+            fruit: 'pineapples'
+        });
+        
+        expect(newEnv).to.have.all.keys(keys);
+        
+        expect(newEnv).to.have.property('unicorn').and.to.equal('pizza');
+        expect(newEnv).to.have.property('fruit').and.to.equal('pineapples');
+    });
+    
     it('does not modify the actual process.env', function() {
         var testKey = 'unicorn_llama';
         

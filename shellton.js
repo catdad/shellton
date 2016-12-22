@@ -21,16 +21,32 @@ function getConfig(command) {
     } : command;
 }
 
+function mergePaths() {
+    
+    var mergedPath = [].slice.call(arguments).reduce(function(memo, arg) {
+        var p = arg.PATH || arg.Path || arg.path;
+
+        if (!(_.isString(p) && p.length)) {
+            return memo;
+        }
+
+        p = p.trim().replace(new RegExp(path.delimiter + '$'), '');
+
+        return memo.concat(p.split(path.delimiter));
+    }, []).join(path.delimiter);
+    
+    // because Windows, we need to overwrite all 3
+    return {
+        PATH: mergedPath,
+        Path: mergedPath,
+        path: mergedPath
+    };
+}
+
 function getEnv(config) {
-    var env = _.extend({}, config.env || {}, process.env);
-    var envPath = env.PATH || env.Path || env.path;
-    envPath = envPath.replace(new RegExp(path.delimiter + '$'), '');
-    envPath += path.delimiter + nodeModulesBin;
-    
-    // overwrite both, because Windows
-    env.PATH = env.Path = envPath;
-    
-    return env;
+    return newEnv(config.env, mergePaths(config.env || {}, process.env, {
+        PATH: nodeModulesBin
+    }));
 }
 
 function isIOStream(stream) {
@@ -175,21 +191,16 @@ function extendToString(target) {
         return to;
     }
     
-    args.forEach(function(val) {
-        extend(target, val);
-    });
+    args.forEach(extend.bind(null, target));
     
     return target;
 }
 
-function newEnv(obj) {
-    var copy = _.cloneDeep(process.env);
-    
-    if (!_.isPlainObject(obj)) {
-        return copy;
-    }
-    
-    return extendToString(copy, obj);
+function newEnv() {
+    return extendToString.apply(
+        null,
+        [_.cloneDeep(process.env)].concat(_.filter(arguments, _.isPlainObject))
+    );
 }
 
 // module.exports = exec;
