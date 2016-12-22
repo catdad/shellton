@@ -44,9 +44,11 @@ function mergePaths() {
 }
 
 function getEnv(config) {
-    return newEnv(config.env, mergePaths(config.env || {}, process.env, {
-        PATH: nodeModulesBin
-    }));
+    return newEnv(config.env, mergePaths(
+        config.env || {},
+        process.env,
+        { PATH: nodeModulesBin }
+    ));
 }
 
 function isIOStream(stream) {
