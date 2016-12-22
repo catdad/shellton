@@ -11,24 +11,14 @@ var nodeModulesBin = path.resolve(__dirname, 'node_modules', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
 function validateFunction(obj) {
-    return (obj && ({}).toString.call(obj) === '[object Function]') ?
-        obj : 
-        _.noop;
+    return _.isFunction(obj) ? obj : _.noop;
 }
 
 function getConfig(command) {
-    var config;
-    
-    if (typeof command === 'string') {
-        config = {
-            task: command,
-            cwd: process.cwd
-        };
-    } else {
-        config = command;
-    }
-    
-    return config;
+    return (typeof command === 'string') ? {
+        task: command,
+        cwd: process.cwd
+    } : command;
 }
 
 function getEnv(config) {
