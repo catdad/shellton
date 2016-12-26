@@ -19,6 +19,7 @@
   "scripts": {
     "test": "mocha",
     "coverage": "istanbul cover --dir coverage node_modules/mocha/bin/_mocha",
+    "cov-report": "codeclimate-test-reporter < coverage/lcov.info",
     "mocha": "mocha",
     "dot": "mocha --reporter dot"
   },
