@@ -25,6 +25,12 @@ test_script:
   # run tests
   - npm test
 
+# scripts to run after tests
+after_test:
+  - npm run coverage
+  - set CODECLIMATE_REPO_TOKEN=f50b5c7ebd68103f6233b46602a1607896b8ddcfe25355a11d865aa5acd60758
+  - type coverage\lcov.info | codeclimate-test-reporter
+
 # Don't actually build.
 # No idea what this does, but it was in the example file
 build: off
