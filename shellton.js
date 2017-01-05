@@ -130,7 +130,7 @@ function spawn(command, done) {
         stdio: stdio
     };
     
-    if (/^win/.test(process.platform)) {
+    if (platform === 'win') {
         opts.windowsVerbatimArguments = config.windowsVerbatimArguments !== false;
     }
     
