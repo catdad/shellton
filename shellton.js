@@ -8,6 +8,7 @@ var _ = require('lodash');
 
 // Add the node_modules to the PATH
 var nodeModulesBin = path.resolve(__dirname, 'node_modules', '.bin');
+var parentNodeModulesBin = path.resolve(__dirname, '..', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
 function validateFunction(obj) {
@@ -47,7 +48,8 @@ function getEnv(config) {
     return newEnv(config.env, mergePaths(
         config.env || {},
         process.env,
-        { PATH: nodeModulesBin }
+        { PATH: nodeModulesBin },
+        { PATH: parentNodeModulesBin }
     ));
 }
 
