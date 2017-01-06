@@ -1,5 +1,6 @@
-/* jshint node: true, -W030 */
-/* global describe, it */
+/* jshint node: true, mocha: true, -W030 */
+
+var path = require('path');
 
 var chai = require('chai');
 var expect = chai.expect;
@@ -8,6 +9,7 @@ var through = require('through2');
 var es = require('event-stream');
 var _ = require('lodash');
 var isIo = require('is-io');
+var root = require('rootrequire');
 
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 var node = (platform === 'win' && isIo) ? 'iojs' : 'node';
@@ -311,7 +313,49 @@ function addTests(shell) {
                     done();
                 });
             });
-        });    
+        });
+        
+        describe('modifies the path', function() {
+            var pathenv;
+            
+            before(function (done) {
+                var task = platform === 'win' ? 'echo %PATH%' : 'echo $PATH';
+                
+                shell({
+                    task: task
+                }, function (err, stdout, stderr) {
+                    if (err) {
+                        return done(err);
+                    }
+                    
+                    pathenv = stdout.trim();
+                    
+                    done();
+                });
+            });
+            
+            var regexTemplate = path.delimiter + '%s(' + path.delimiter + '|$)';
+            
+            it('to have more values than by default', function() {
+                expect(pathenv).to.not.equal(process.env.PATH);
+                expect(pathenv.length).to.be.above(process.env.PATH.length);
+            });
+            
+            it('to include its own node_modules bin', function() {
+                var binPath = path.resolve(root, 'node_modules', '.bin').replace(/\\/g, '\\\\');
+                var rootRegex = new RegExp(path.delimiter + binPath + path.delimiter);
+                
+                expect(pathenv).to.match(rootRegex);
+            });
+            
+            it('to include the node_modules bin of the place where it is installed', function() {
+                // this one will always be last... so might as well $
+                var binPath = path.resolve(root, '..', '.bin').replace(/\\/g, '\\\\');
+                var rootRegex = new RegExp(path.delimiter + binPath + '$');
+                
+                expect(pathenv).to.match(rootRegex);
+            });
+        });
     };
 }
 
