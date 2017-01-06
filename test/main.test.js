@@ -355,6 +355,10 @@ function addTests(shell) {
                 
                 expect(pathenv).to.match(rootRegex);
             });
+            
+            it('to include modifications provided in the "PATH" env variable');
+            it('to include modifications provided in the "Path" env variable');
+            it('to include modifications provided in the "path" env variable');
         });
     };
 }
