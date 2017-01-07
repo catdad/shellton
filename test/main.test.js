@@ -55,7 +55,7 @@ function addTests(shell) {
         });
         
         it('can output buffers', function(done) {
-            shell({ task: 'echo pineapples', output: 'buffer' }, function (err, stdout, stderr) {
+            shell({ task: 'echo pineapples', encoding: 'buffer' }, function (err, stdout, stderr) {
                 if (err) {
                     return done(err);
                 }

@@ -21,7 +21,7 @@ function getConfig(command) {
         cwd: process.cwd
     } : command;
     
-    config.output = config.output === 'buffer' ? 'buffer' : 'utf8';
+    config.encoding = config.encoding === 'buffer' ? 'buffer' : 'utf8';
     
     return config;
 }
@@ -93,7 +93,7 @@ function exec(command, done) {
     var task = child.exec(config.task, {
         cwd: config.cwd || process.cwd(),
         env: getEnv(config),
-        encoding: config.output
+        encoding: config.encoding
     }, function(err, stdout, stderr) {
         done(err, stdout, stderr);
     });
@@ -153,10 +153,10 @@ function spawn(command, done) {
     
     var parallelTasks = {
         stdout: function(next) {
-            collectStream(task.stdout, config.output, next);
+            collectStream(task.stdout, config.encoding, next);
         },
         stderr: function(next) {
-            collectStream(task.stderr, config.output, next);
+            collectStream(task.stderr, config.encoding, next);
         },
         exitCode: function(next) {
             task.on('exit', function(code) {
