@@ -11,6 +11,14 @@ var nodeModulesBin = path.resolve(__dirname, 'node_modules', '.bin');
 var parentNodeModulesBin = path.resolve(__dirname, '..', '.bin');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 
+// In node 0.10, 'buffer' is not a correct encoding... it uses Buffer.isEncoding.
+// Further, even though Buffer.isEncoding allows 'raw', node 0.10 always does a
+// Buffer.toString, where 'raw' is not allowed... since, you know, that's not a
+// string. So hack it is... I am like 42% sure that I can ask for binary output
+// and then convert that back to a buffer.
+var VERSION = process.versions.node.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/);
+var BUFFER_ENCODING = +VERSION[1] === 0 && +VERSION[2] < 12 ? 'binary' : 'buffer';
+
 function validateFunction(obj) {
     return _.isFunction(obj) ? obj : _.noop;
 }
@@ -21,7 +29,7 @@ function getConfig(command) {
         cwd: process.cwd
     } : command;
     
-    config.encoding = config.encoding === 'buffer' ? 'buffer' : 'utf8';
+    config.encoding = config.encoding === 'buffer' ? BUFFER_ENCODING : 'utf8';
     
     return config;
 }
@@ -78,7 +86,7 @@ function collectStream(stream, encoding, callback) {
     stream.on('end', function() {
         var out = Buffer.concat(body);
         
-        if (encoding !== 'buffer') {
+        if (encoding !== BUFFER_ENCODING) {
             out = out.toString();
         }
         
@@ -95,6 +103,16 @@ function exec(command, done) {
         env: getEnv(config),
         encoding: config.encoding
     }, function(err, stdout, stderr) {
+        // If these are not buffers when they are expected to be,
+        // then we are in Node 0.10 and everythings sucks.
+        if (config.encoding === BUFFER_ENCODING && !Buffer.isBuffer(stdout)) {
+            stdout = new Buffer(stdout, BUFFER_ENCODING);
+        }
+        
+        if (config.encoding === BUFFER_ENCODING && !Buffer.isBuffer(stderr)) {
+            stderr = new Buffer(stderr, BUFFER_ENCODING);
+        }
+        
         done(err, stdout, stderr);
     });
     
