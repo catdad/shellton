@@ -16,10 +16,14 @@ function validateFunction(obj) {
 }
 
 function getConfig(command) {
-    return (typeof command === 'string') ? {
+    var config = (typeof command === 'string') ? {
         task: command,
         cwd: process.cwd
     } : command;
+    
+    config.output = config.output === 'buffer' ? 'buffer' : 'utf8';
+    
+    return config;
 }
 
 function mergePaths() {
@@ -64,7 +68,7 @@ function pipeStream(from, to, config) {
     from.pipe(to, opts);
 }
 
-function collectStream(stream, callback) {
+function collectStream(stream, encoding, callback) {
     var body = [];
     
     stream.on('data', function(chunk) {
@@ -72,7 +76,13 @@ function collectStream(stream, callback) {
     });
 
     stream.on('end', function() {
-        callback(undefined, Buffer.concat(body).toString());
+        var out = Buffer.concat(body);
+        
+        if (encoding !== 'buffer') {
+            out = out.toString();
+        }
+        
+        callback(undefined, out);
     });
 }
 
@@ -82,7 +92,8 @@ function exec(command, done) {
     
     var task = child.exec(config.task, {
         cwd: config.cwd || process.cwd(),
-        env: getEnv(config)
+        env: getEnv(config),
+        encoding: config.output
     }, function(err, stdout, stderr) {
         done(err, stdout, stderr);
     });
@@ -142,10 +153,10 @@ function spawn(command, done) {
     
     var parallelTasks = {
         stdout: function(next) {
-            collectStream(task.stdout, next);
+            collectStream(task.stdout, config.output, next);
         },
         stderr: function(next) {
-            collectStream(task.stderr, next);
+            collectStream(task.stderr, config.output, next);
         },
         exitCode: function(next) {
             task.on('exit', function(code) {
