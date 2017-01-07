@@ -135,10 +135,11 @@ shellton.exec('echo exec task');
   - `stderr` {Stream} : a stream to where the standard error of the command will be piped.
   - `cwd` {string} : the directory from where the command will be executed. The default is the current directory of the parent process.
   - `env` {Object} : the environment variables for the child process. Values here will be merged with an overwrite values in the current `process.env`.
+  - `encoding` {string} : the encoding to use to the data provided to the callback. The options are `utf8` and `buffer`, with `utf8` being the default.
   
 `callback` {function} : The callback to call when the child process exists. This parameter is optional. It receives the following parameters, in order:
 - `error` {Error} : An error that occurred when executing the command. This generally means the command exited with a code other than 0. `error.code` specifies the exit code of the command.
-- `stdout` {string} : A string representation of the standard output of the command. If the command outputs binary, you will likely want to read directly from `stdout` in the `options` object.
-- `stderr` {string} : A string representation of the standard error of the command. If the command outputs binary, you will likely want to read directly from `stderr` in the `options` object.
+- `stdout` {string|Buffer} : A string representation of the standard output of the command. If the command outputs binary, you will likely want to read directly from `stdout` in the `options` object.
+- `stderr` {string|Buffer} : A string representation of the standard error of the command. If the command outputs binary, you will likely want to read directly from `stderr` in the `options` object.
 
 [![Analytics](https://ga-beacon.appspot.com/UA-17159207-7/shellton/readme?flat)](https://github.com/igrigorik/ga-beacon)

@@ -54,6 +54,20 @@ function addTests(shell) {
             });
         });
         
+        it('can output buffers', function(done) {
+            shell({ task: 'echo pineapples', encoding: 'buffer' }, function (err, stdout, stderr) {
+                if (err) {
+                    return done(err);
+                }
+                
+                expect(Buffer.isBuffer(stdout)).to.equal(true);
+                expect(Buffer.isBuffer(stderr)).to.equal(true);
+
+                testSuccessResult(err, stdout.toString(), stderr.toString(), 'pineapples', '');
+                done();
+            });
+        });
+        
         it('takes a cwd', function(done) {
             var cwd = __dirname;
             shell({
