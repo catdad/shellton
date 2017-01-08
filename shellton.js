@@ -98,22 +98,22 @@ function exec(command, done) {
     var config = getConfig(command);
     done = validateFunction(done);
     
+    function encode(content) {
+        // If these are not buffers when they are expected to be,
+        // then we are in Node 0.10 and everythings sucks.
+        if (config.encoding === BUFFER_ENCODING && !Buffer.isBuffer(content)) {
+            return new Buffer(content, BUFFER_ENCODING);
+        }
+        
+        return content;
+    }
+    
     var task = child.exec(config.task, {
         cwd: config.cwd || process.cwd(),
         env: getEnv(config),
         encoding: config.encoding
     }, function(err, stdout, stderr) {
-        // If these are not buffers when they are expected to be,
-        // then we are in Node 0.10 and everythings sucks.
-        if (config.encoding === BUFFER_ENCODING && !Buffer.isBuffer(stdout)) {
-            stdout = new Buffer(stdout, BUFFER_ENCODING);
-        }
-        
-        if (config.encoding === BUFFER_ENCODING && !Buffer.isBuffer(stderr)) {
-            stderr = new Buffer(stderr, BUFFER_ENCODING);
-        }
-        
-        done(err, stdout, stderr);
+        done(err, encode(stdout), encode(stderr));
     });
     
     if (config.stdout) {
