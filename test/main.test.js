@@ -14,7 +14,7 @@ var root = require('rootrequire');
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 var node = (platform === 'win' && isIo) ? 'iojs' : 'node';
 
-var shellton = require('../shellton.js');
+var shellton = require('../');
 
 function isRegex(val) {
     return Object.prototype.toString.call(val) === '[object RegExp]';
