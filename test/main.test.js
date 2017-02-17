@@ -331,19 +331,29 @@ function addTests(shell) {
         
         describe('modifies the path', function() {
             var pathenv;
+            var task = platform === 'win' ? 'echo %PATH%' : 'echo $PATH';
             
-            before(function (done) {
-                var task = platform === 'win' ? 'echo %PATH%' : 'echo $PATH';
-                
-                shell({
-                    task: task
-                }, function (err, stdout, stderr) {
+            function getPath(opts, done) {
+                shell(opts, function (err, stdout, stderr) {
                     if (err) {
                         return done(err);
                     }
                     
-                    pathenv = stdout.trim();
                     
+                    done(null, stdout.trim());
+                });
+            }
+            
+            before(function (done) {
+                getPath({
+                    task: task
+                }, function (err, pathval) {
+                    if (err) {
+                        return done(err);
+                    }
+                    
+                    pathenv = pathval;
+
                     done();
                 });
             });
@@ -370,7 +380,24 @@ function addTests(shell) {
                 expect(pathenv).to.match(rootRegex);
             });
             
-            it('to include modifications provided in the "PATH" env variable');
+            it('to include modifications provided in the "PATH" env variable', function(done) {
+                var VAL = 'pineapples';
+                
+                getPath({
+                    task: task,
+                    env: {
+                        PATH: VAL
+                    }
+                }, function (err, pathval) {
+                    if (err) {
+                        return done(err);
+                    }
+                    
+                    expect(pathval).to.match(new RegExp('^' + VAL));
+                    
+                    done();
+                });
+            });
             it('to include modifications provided in the "Path" env variable');
             it('to include modifications provided in the "path" env variable');
         });
