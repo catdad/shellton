@@ -334,6 +334,8 @@ function addTests(shell) {
             var task = platform === 'win' ? 'echo %PATH%' : 'echo $PATH';
             
             function getPath(opts, done) {
+                opts.task = task;
+                
                 shell(opts, function (err, stdout, stderr) {
                     if (err) {
                         return done(err);
@@ -345,9 +347,7 @@ function addTests(shell) {
             }
             
             before(function (done) {
-                getPath({
-                    task: task
-                }, function (err, pathval) {
+                getPath({}, function (err, pathval) {
                     if (err) {
                         return done(err);
                     }
@@ -381,10 +381,9 @@ function addTests(shell) {
             });
             
             it('to include modifications provided in the "PATH" env variable', function(done) {
-                var VAL = 'pineapples';
+                var VAL = 'pineapples' + Math.random().toString(36).slice(2);
                 
                 getPath({
-                    task: task,
                     env: {
                         PATH: VAL
                     }
@@ -398,8 +397,42 @@ function addTests(shell) {
                     done();
                 });
             });
-            it('to include modifications provided in the "Path" env variable');
-            it('to include modifications provided in the "path" env variable');
+            
+            it('to include modifications provided in the "Path" env variable', function(done) {
+                var VAL = 'pineapples' + Math.random().toString(36).slice(2);
+                
+                getPath({
+                    env: {
+                        Path: VAL
+                    }
+                }, function (err, pathval) {
+                    if (err) {
+                        return done(err);
+                    }
+                    
+                    expect(pathval).to.match(new RegExp('^' + VAL));
+                    
+                    done();
+                });
+            });
+            
+            it('to include modifications provided in the "path" env variable', function(done) {
+                var VAL = 'pineapples' + Math.random().toString(36).slice(2);
+                
+                getPath({
+                    env: {
+                        path: VAL
+                    }
+                }, function (err, pathval) {
+                    if (err) {
+                        return done(err);
+                    }
+                    
+                    expect(pathval).to.match(new RegExp('^' + VAL));
+                    
+                    done();
+                });
+            });
         });
     };
 }
