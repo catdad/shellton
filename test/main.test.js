@@ -22,7 +22,10 @@ function isRegex(val) {
 
 function addTests(shell) {
     function testSuccessResult(err, stdout, stderr, outVal, errVal) {
-        expect(err).to.not.be.ok;
+        if (err) {
+            throw err;
+        }
+        
         expect(stdout).to.be.a('string');
         expect(stderr).to.be.a('string');
         
