@@ -57,6 +57,34 @@ function addTests(shell) {
             });
         });
         
+        it('executes from cwd by default, when using a string command', function(done) {
+            var cmd = platform === 'win' ? 'cd' : 'pwd';
+            
+            shell(cmd, function (err, stdout, stderr) {
+                if (err) {
+                    return done(err);
+                }
+                
+                expect(stdout.trim()).to.equal(process.cwd());
+                
+                done();
+            });
+        });
+        
+        it('executes from cwd by default, when using an options object', function(done) {
+            var cmd = platform === 'win' ? 'cd' : 'pwd';
+            
+            shell({ task: cmd }, function (err, stdout, stderr) {
+                if (err) {
+                    return done(err);
+                }
+                
+                expect(stdout.trim()).to.equal(process.cwd());
+                
+                done();
+            });
+        });
+        
         it('can output buffers', function(done) {
             shell({ task: 'echo pineapples', encoding: 'buffer' }, function (err, stdout, stderr) {
                 if (err) {
