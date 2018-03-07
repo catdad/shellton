@@ -26,7 +26,7 @@ function validateFunction(obj) {
 function getConfig(command) {
     var config = (typeof command === 'string') ? {
         task: command,
-        cwd: process.cwd
+        cwd: process.cwd()
     } : command;
     
     config.encoding = config.encoding === 'buffer' ? BUFFER_ENCODING : 'utf8';
