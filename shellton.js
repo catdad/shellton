@@ -50,19 +50,22 @@ function mergePaths() {
     
     // because Windows, we need to overwrite all 3
     return {
-        PATH: mergedPath,
-        Path: mergedPath,
-        path: mergedPath
+        PATH: mergedPath
     };
 }
 
 function getEnv(config) {
-    return newEnv(config.env, mergePaths(
+    var env = newEnv(config.env, mergePaths(
         config.env || {},
         process.env,
         { PATH: nodeModulesBin },
         { PATH: parentNodeModulesBin }
     ));
+    
+    delete env.Path;
+    delete env.path;
+    
+    return env;
 }
 
 function isIOStream(stream) {
