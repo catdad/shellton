@@ -123,6 +123,22 @@ function addTests(shell) {
             });
         });
         
+        it('only includes PATH on the environment', function (done) {
+            shell(node + ' -e "console.log(JSON.stringify(process.env))"', function(err, stdout, stderr) {
+                if (err) {
+                    return done(err);
+                }
+                
+                var env = JSON.parse(stdout);
+                
+                expect(env).to.have.property('PATH');
+                expect(env).to.not.have.property('Path');
+                expect(env).to.not.have.property('path');
+                
+                done();
+            });
+        });
+        
         it('can execute NPM modules from bin when env is set', function(done) {
             shell({
                 task: 'istanbul help',
