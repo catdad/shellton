@@ -13,12 +13,6 @@ os:
   - linux
   - osx
 
-before_install:
-  - pwd
-#  - rm -rf ~/.nvm
-#  - git clone https://github.com/creationix/nvm.git !/.nvm
-#  - source ~/.nvm/nvm.sh
-
 addons:
   code_climate:
     repo_token: f50b5c7ebd68103f6233b46602a1607896b8ddcfe25355a11d865aa5acd60758
