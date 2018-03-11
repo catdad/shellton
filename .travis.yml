@@ -13,12 +13,6 @@ os:
   - linux
   - osx
 
-before_install:
-  - pwd
-#  - rm -rf ~/.nvm
-#  - git clone https://github.com/creationix/nvm.git !/.nvm
-#  - source ~/.nvm/nvm.sh
-
 addons:
   code_climate:
     repo_token: f50b5c7ebd68103f6233b46602a1607896b8ddcfe25355a11d865aa5acd60758
@@ -26,3 +20,19 @@ addons:
 after_script:
   - npm run coverage
   - codeclimate-test-reporter < coverage/lcov.info
+    
+jobs:
+  include:
+    - stage: npm release
+      if: tag IS present
+      node_js: '8'
+      script: echo "Deploying to npm ..."
+      after_script: skip
+      deploy:
+        provider: npm
+        email: vatev.1+npm@gmail.com
+        api_key:
+          secure: C2OLt1HjiksMrwrzgl9nOiuh2aNfVHjaYb739LjNapP4Gfgaagf0OealYVdQwlPgMM/0EH/yQYFNH2VcCPb91X72xVY1rCP3oHYdukqWBY6C32T8rOv3TLHmT26vqQe26Y82jzipZe9BRvYP7MmNoQhszuE8hwjUas3/OIs13mHrR9zdBppS+d/jZmsP6363IurpXJCOuAMRDAC3ZUyAlpGdc/7ZHNEiTMIglxDdJqfBhlbx8c2gS0h1uTX5XsVH1qc+MQ2G304vtg0Fu681g2a/1zg4LczEN6gKcl0NFHaMb4JOSh+VdhzoG8Ji9kV4dnkh1FMmLeSD2lsEWmrmDvVNQcIvTcBuf6hy9wSaE2b7zXlUPwopKUHxtEgx85Y+eAiKVZYii3BbNxMxEi279UDJoKBSGo0SNKrJ1ZXQN7bROpSfTPmcso37R1CUijzP5y6BoWczwogcbrcSPeGQ08P/2eHTAHN7q8YFVj84A/+jHKi+0avAwcb05JoB05qow01wyFF5THMWv1ST1lVDGtnvCil+PGU3Kp65r8dauxKpN6n1v5iLv6d0nLNhLzTmk6Ipq8sikGeilbIQQ0zeh3vpwiuBKf12NNs3rgwGISE/+/79cEEGsoySh1GZoAYcFk50NHdX+/LQGZQMgcZ1KLiopjW2RsZY28CmGnCGm68=
+        on:
+          tags: true
+          repo: catdad/shellton
