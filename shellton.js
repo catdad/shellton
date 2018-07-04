@@ -1,5 +1,6 @@
 /* jshint node: true */
 
+var util = require('util');
 var path = require('path');
 var child = require('child_process');
 
@@ -281,7 +282,7 @@ function newEnv() {
 // module.exports = exec;
 module.exports = spawn;
 
-module.exports.spawn = spawn;
-module.exports.exec = exec;
+module.exports.spawn = util.deprecate(spawn, 'shellton.spawn() is deprecated, use shellton() instead');
+module.exports.exec = util.deprecate(exec, 'shellton.exec() is deprecated, use shellton() instead');
 
 module.exports.env = newEnv;
