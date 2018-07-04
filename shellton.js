@@ -17,7 +17,8 @@ var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 // string. So hack it is... I am like 42% sure that I can ask for binary output
 // and then convert that back to a buffer.
 var VERSION = process.versions.node.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/);
-var BUFFER_ENCODING = +VERSION[1] === 0 && +VERSION[2] < 12 ? 'binary' : 'buffer';
+var IS_NODE_0_10 = +VERSION[1] === 0 && +VERSION[2] < 12;
+var BUFFER_ENCODING = IS_NODE_0_10 ? 'binary' : 'buffer';
 
 function validateFunction(obj) {
     return _.isFunction(obj) ? obj : _.noop;
@@ -147,19 +148,39 @@ function spawn(command, done) {
     var stdio = [ 'pipe', 'pipe', 'pipe' ];
     var pipeStdout = true;
     var pipeStderr = true;
+    var collectStdout = true;
+    var collectStderr = true;
     
-    if (command.stdio === 'inherit') {
-        stdio[0] = 'inherit';
-    }
-    
-    if (command.stdout === 'inherit') {
-        stdio[1] = 'inherit';
-        pipeStdout = false;
-    }
-    
-    if (command.stderr === 'inherit') {
-        stdio[2] = 'inherit';
-        pipeStderr = false;
+    // 'inherit' doesn't work in node 0.10, so we will just
+    // pipe to the appropriate streams
+    if (!IS_NODE_0_10) {
+        if (command.stdin === 'inherit') {
+            stdio[0] = 'inherit';
+        }
+
+        if (command.stdout === 'inherit') {
+            stdio[1] = 'inherit';
+            pipeStdout = collectStdout = false;
+        }
+
+        if (command.stderr === 'inherit') {
+            stdio[2] = 'inherit';
+            pipeStderr = collectStderr = false;
+        }    
+    } else {
+        if (command.stdio === 'inherit') {
+            command.stdin = process.stdin;
+        }
+
+        if (command.stdout === 'inherit') {
+            command.stdout = process.stdout;
+            collectStdout = false;
+        }
+
+        if (command.stderr === 'inherit') {
+            command.stderr = process.stdout;
+            collectStderr = false;
+        }   
     }
     
     var executable = platform === 'win' ? 'cmd.exe' : 'bash';
@@ -184,14 +205,14 @@ function spawn(command, done) {
     
     var parallelTasks = {
         stdout: function(next) {
-            if (command.stdout === 'inherit') {
+            if (!collectStdout) {
                 return next(null, '');
             }
             
             collectStream(task.stdout, config.encoding, next);
         },
         stderr: function(next) {
-            if (command.stderr === 'inherit') {
+            if (!collectStderr) {
                 return next(null, '');
             }
             
