@@ -115,15 +115,6 @@ input.end();
 
 ## API
 
-Shellton will use the `spawn` method from `child_process` to execute tasks by default. However, it supports `exec` as well with the same API, for when you need it. You can select which one to use, as such:
-
-```javascript
-var shellton = require('shellton');
-
-shellton.spawn('echo spawn task');
-shellton.exec('echo exec task');
-```
-
 ### `shellton(options, callback)`
 
 `options` {string | Object} : The options defining the external task to execute. This parameter is required.
