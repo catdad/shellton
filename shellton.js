@@ -116,19 +116,25 @@ function exec(command, done) {
         env: getEnv(config),
         encoding: config.encoding
     }, function(err, stdout, stderr) {
-        done(err, encode(stdout), encode(stderr));
+        // to stay consistent with `spawn`, we will remove values here
+        // if the streams were set to 'inherit'
+        done(
+            err,
+            encode(config.stdout === 'inherit' ? '' : stdout),
+            encode(config.stderr === 'inherit' ? '' : stderr)
+        );
     });
     
     if (config.stdout) {
-        pipeStream(task.stdout, config.stdout);
+        pipeStream(task.stdout, config.stdout === 'inherit' ? process.stdout : config.stdout);
     }
     
     if (config.stderr) {
-        pipeStream(task.stderr, config.stderr);
+        pipeStream(task.stderr, config.stderr === 'inherit' ? process.stderr : config.stderr);
     }
     
     if (config.stdin) {
-        config.stdin.pipe(task.stdin);
+        config.stdin.pipe(config.stdin === 'inherit' ? process.stdin : task.stdin);
     }
     
     return task;
@@ -142,15 +148,19 @@ function spawn(command, done) {
     var pipeStdout = true;
     var pipeStderr = true;
     
-//    if (isIOStream(config.stdout)) {
-//        stdio[1] = config.stdout;
-//        pipeStdout = false;
-//    }
-//    
-//    if (isIOStream(config.stderr)) {
-//        stdio[2] = config.stderr;
-//        pipeStderr = false;
-//    }
+    if (command.stdio === 'inherit') {
+        stdio[0] = 'inherit';
+    }
+    
+    if (command.stdout === 'inherit') {
+        stdio[1] = 'inherit';
+        pipeStdout = false;
+    }
+    
+    if (command.stderr === 'inherit') {
+        stdio[2] = 'inherit';
+        pipeStderr = false;
+    }
     
     var executable = platform === 'win' ? 'cmd.exe' : 'bash';
     var firstToken = platform === 'win' ? '/c' : '-c';
@@ -174,9 +184,17 @@ function spawn(command, done) {
     
     var parallelTasks = {
         stdout: function(next) {
+            if (command.stdout === 'inherit') {
+                return next(null, '');
+            }
+            
             collectStream(task.stdout, config.encoding, next);
         },
         stderr: function(next) {
+            if (command.stderr === 'inherit') {
+                return next(null, '');
+            }
+            
             collectStream(task.stderr, config.encoding, next);
         },
         exitCode: function(next) {

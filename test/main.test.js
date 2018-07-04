@@ -10,6 +10,7 @@ var es = require('event-stream');
 var _ = require('lodash');
 var isIo = require('is-io');
 var root = require('rootrequire');
+var mockIo = require('mock-stdio');
 
 var platform = /^win/.test(process.platform) ? 'win' : 'nix';
 var node = (platform === 'win' && isIo) ? 'iojs' : 'node';
@@ -194,6 +195,31 @@ function addTests(shell) {
                 testStream(opts, stream, done);
             });
             
+            it('process.stdout when using value "inherit"', function(done) {
+                mockIo.start();
+                
+                var opts = {
+                    task: 'echo this is a test',
+                    stdout: 'inherit'
+                };
+                
+                shell(opts, function (err, stdout, stderr) {
+                    var io = mockIo.end();
+                    
+                    expect(err).to.equal(null);
+                    expect(stdout).to.equal('');
+                    expect(stderr).to.equal('');
+                    
+                    // when using spawn, node passes the fs pointer to
+                    // the child process, so we cannot mock stdio
+                    if (shell === shellton.exec) {
+                        expect(io.stdout.trim()).to.equal('this is a test');
+                    }
+                    
+                    done();
+                });
+            });
+            
             it('an stderr stream', function(done) {
                 var stream = through();
                 var opts = {
@@ -202,6 +228,31 @@ function addTests(shell) {
                 };
                 
                 testStream(opts, stream, done);
+            });
+            
+            it('process.stderr when using value "inherit"', function(done) {
+                mockIo.start();
+                
+                var opts = {
+                    task: 'echo this is a test 1>&2',
+                    stderr: 'inherit'
+                };
+                
+                shell(opts, function (err, stdout, stderr) {
+                    var io = mockIo.end();
+                    
+                    expect(err).to.equal(null);
+                    expect(stdout).to.equal('');
+                    expect(stderr).to.equal('');
+                    
+                    // when using spawn, node passes the fs pointer to
+                    // the child process, so we cannot mock stdio
+                    if (shell === shellton.exec) {
+                        expect(io.stderr.trim()).to.equal('this is a test');
+                    }
+                    
+                    done();
+                });
             });
         });
 
