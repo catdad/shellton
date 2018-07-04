@@ -545,7 +545,7 @@ function addTests(shell) {
     };
 }
 
-//describe('[Module Export]', addTests(shellton));
+describe('[Module Export]', addTests(shellton));
 describe('[Spawn]', addTests(shellton.spawn));
 describe('[Exec]', addTests(shellton.exec));
 
