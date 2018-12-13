@@ -20,6 +20,26 @@ var VERSION = process.versions.node.match(/([0-9]+)\.([0-9]+)\.([0-9]+)/);
 var IS_NODE_0_10 = +VERSION[1] === 0 && +VERSION[2] < 12;
 var BUFFER_ENCODING = IS_NODE_0_10 ? 'binary' : 'buffer';
 
+var defaultShell = (function () {
+    // adapted from https://github.com/sindresorhus/default-shell
+    var env = process.env;
+
+    if (process.platform === 'darwin') {
+        return env.SHELL || '/bin/bash';
+    }
+
+    if (process.platform === 'win32') {
+        // Powershell behaves differently at times, so I am reluctant to
+        // just enable this, especially since Microsoft has started making
+        // Powershell the default in newer versions of Windows.
+        // return env.COMSPEC || 'cmd.exe';
+        
+        return 'cmd.exe';
+    }
+
+    return env.SHELL || '/bin/sh';
+})();
+
 function validateFunction(obj) {
     return _.isFunction(obj) ? obj : _.noop;
 }
@@ -183,7 +203,6 @@ function spawn(command, done) {
         }   
     }
     
-    var executable = platform === 'win' ? 'cmd.exe' : 'bash';
     var firstToken = platform === 'win' ? '/c' : '-c';
     var tokens = [firstToken, config.task];
     
@@ -197,7 +216,7 @@ function spawn(command, done) {
         opts.windowsVerbatimArguments = config.windowsVerbatimArguments !== false;
     }
     
-    var task = child.spawn(executable, tokens, opts);
+    var task = child.spawn(defaultShell, tokens, opts);
     
     task.on('error', function(err) {
         done(err);
