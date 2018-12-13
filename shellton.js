@@ -5,6 +5,7 @@ var child = require('child_process');
 
 var async = require('async');
 var _ = require('lodash');
+var defaultShell = require('default-shell');
 
 // Add the node_modules to the PATH
 var nodeModulesBin = path.resolve(__dirname, 'node_modules', '.bin');
@@ -183,7 +184,7 @@ function spawn(command, done) {
         }   
     }
     
-    var executable = platform === 'win' ? 'cmd.exe' : 'bash';
+    var executable = platform === 'win' ? 'cmd.exe' : defaultShell;
     var firstToken = platform === 'win' ? '/c' : '-c';
     var tokens = [firstToken, config.task];
     
