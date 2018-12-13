@@ -6,7 +6,7 @@ var chai = require('chai');
 var expect = chai.expect;
 
 var through = require('through2');
-var es = require('event-stream');
+var ns = require('node-stream');
 var _ = require('lodash');
 var isIo = require('is-io');
 var root = require('rootrequire');
@@ -172,7 +172,7 @@ function addTests(shell) {
                     done();
                 }
 
-                stream.pipe(es.wait(function(err, body) {
+                stream.pipe(ns.wait(function(err, body) {
                     c++;
                     streamOut = body;
                     compare();
