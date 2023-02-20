@@ -26,6 +26,21 @@ jobs:
             node: '0.10'
     runs-on: ${{matrix.os}}
     name: test (node@${{matrix.node}}, ${{matrix.os}})
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
+      - run: npm test
+
+  coverage:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        node: [16]
+    runs-on: ${{matrix.os}}
+    name: coverage (node@${{matrix.node}}, ${{matrix.os}})
     env:
       CODECLIMATE_REPO_TOKEN: f50b5c7ebd68103f6233b46602a1607896b8ddcfe25355a11d865aa5acd60758
     steps:
@@ -34,12 +49,13 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install
-      - run: npm test
       - run: npm run coverage
-      - run: npm run cov-report 
+      - run: npm run cov-report
 
   publish:
-    needs: test
+    needs:
+      - test
+      - coverage
     if: startsWith(github.ref, 'refs/tags/') && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
