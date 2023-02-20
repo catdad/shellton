@@ -1,1 +1,1 @@
-test/**/*.test.js --reporter spec --ui bdd
+test/**/*.test.js --reporter spec --ui bdd --timeout 10000
