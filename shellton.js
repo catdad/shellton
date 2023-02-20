@@ -245,7 +245,7 @@ function spawn(command, done) {
                     err = new Error('Process exited with code: ' + code);
                     err.code = code;
                 }
-                next(err);
+                next(null, err);
             });
         }
     };
@@ -261,7 +261,7 @@ function spawn(command, done) {
     }
     
     async.parallel(parallelTasks, function(err, results) {
-        done(err || null, results.stdout, results.stderr);
+        done(err || results.exitCode || null, results.stdout, results.stderr);
     });
     
     if (pipeStdout && config.stdout) {
