@@ -419,7 +419,7 @@ function addTests(shell) {
             });
             
             it('provides stdio streams even when there is an error', function(done) {
-                var script = "process.stdout.write('1');process.stderr.write('2');process.exit(1);";
+                var script = "console.log(1);console.error(2);process.exit(1);";
 
                 var command = platform === 'win' ?
                     node + ' -e ' + script :
