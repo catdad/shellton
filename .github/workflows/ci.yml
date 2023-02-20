@@ -21,9 +21,9 @@ jobs:
           - os: windows-latest
             node: 4
           - os: macos-latest
-            node: 0.12
+            node: '0.12'
           - os: windows-latest
-            node: 0.10
+            node: '0.10'
     runs-on: ${{matrix.os}}
     name: test (node@${{matrix.node}}, ${{matrix.os}})
     env:
