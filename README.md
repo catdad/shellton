@@ -1,15 +1,14 @@
 # shellton
 
-[![Linux Build][1]][2]
-[![Windows Build][12]][13]
+[![Build][1]][2]
 [![Test Coverage][3]][4]
 [![Code Climate][5]][6]
 [![Downloads][7]][8]
 [![Version][9]][8]
 [![Dependency Status][10]][11]
 
-[1]: https://travis-ci.org/catdad/shellton.svg?branch=master
-[2]: https://travis-ci.org/catdad/shellton
+[1]: https://img.shields.io/github/actions/workflow/status/catdad/shellton/ci.yml?branch=master&logo=github
+[2]: https://github.com/catdad/shellton/actions/workflows/ci.yml?query=branch%3Amaster
 
 [3]: https://codeclimate.com/github/catdad/shellton/badges/coverage.svg
 [4]: https://codeclimate.com/github/catdad/shellton/coverage
@@ -23,9 +22,6 @@
 
 [10]: https://david-dm.org/catdad/shellton.svg
 [11]: https://david-dm.org/catdad/shellton
-
-[12]: https://ci.appveyor.com/api/projects/status/github/catdad/shellton?branch=master&svg=true
-[13]: https://ci.appveyor.com/project/catdad/shellton
 
 ## Install
 
