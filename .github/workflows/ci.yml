@@ -22,7 +22,7 @@ jobs:
             node: 4
           - os: windows-latest
             node: '0.12'
-          - os: windows-latest
+          - os: ubuntu-latest
             node: '0.10'
     runs-on: ${{matrix.os}}
     name: test (node@${{matrix.node}}, ${{matrix.os}})
