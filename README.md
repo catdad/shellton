@@ -5,7 +5,6 @@
 [![Code Climate][5]][6]
 [![Downloads][7]][8]
 [![Version][9]][8]
-[![Dependency Status][10]][11]
 
 [1]: https://img.shields.io/github/actions/workflow/status/catdad/shellton/ci.yml?branch=master&logo=github
 [2]: https://github.com/catdad/shellton/actions/workflows/ci.yml?query=branch%3Amaster
@@ -19,9 +18,6 @@
 [7]: https://img.shields.io/npm/dm/shellton.svg
 [8]: https://www.npmjs.com/package/shellton
 [9]: https://img.shields.io/npm/v/shellton.svg
-
-[10]: https://david-dm.org/catdad/shellton.svg
-[11]: https://david-dm.org/catdad/shellton
 
 ## Install
 
