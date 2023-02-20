@@ -20,7 +20,7 @@ jobs:
             node: 6
           - os: windows-latest
             node: 4
-          - os: macos-latest
+          - os: windows-latest
             node: '0.12'
           - os: windows-latest
             node: '0.10'
