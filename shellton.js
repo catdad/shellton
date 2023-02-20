@@ -210,6 +210,7 @@ function spawn(command, done) {
     var opts = {
         env: getEnv(config),
         cwd: config.cwd || process.cwd(),
+        windowsHide : true,
         stdio: stdio
     };
     
